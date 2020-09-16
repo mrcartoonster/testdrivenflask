@@ -29,6 +29,6 @@ def display_blog_post(post_id):
     return f"<h1>Blog Post #{post_id}...<h1>"
 
 
-@app.route('/add_stock')
+@app.route("/add_stock")
 def add_stock():
-    return render_template('add_stock.html')
+    return render_template("add_stock.html")
