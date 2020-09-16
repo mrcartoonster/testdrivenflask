@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "/Users/mrcartoonster/.virtualenvs/flask-stock-portfolio-code-0E0zO65t/bin/python",
+    "python.formatting.blackArgs": [
+        "-l 79"
+    ],
+    "editor.formatOnSave": true
+}
