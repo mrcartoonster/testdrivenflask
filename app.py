@@ -11,7 +11,7 @@ def index():
 
 @app.route("/about")
 def about():
-    return "<h2>About this application...</h2>"
+    return render_template("about.html", company_name="TestDriven.io")
 
 
 @app.route("/stocks/")
