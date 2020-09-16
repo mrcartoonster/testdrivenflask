@@ -5,10 +5,12 @@ name = "pypi"
 
 [packages]
 flask = "*"
+pyperclip = "*"
 
 [dev-packages]
 black = "*"
 pre-commit = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.8"
