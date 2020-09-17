@@ -10,5 +10,5 @@ def test_index_page():
     with app.test_client() as client:
         response = client.get("/")
         assert response.status_code == 200
-        assert b"Flask Stock Portfolio APP" in response.data
+        assert b"Flask Stock Portfolio App" in response.data
         assert b"Welcome to the Flask Stock Portfolio App!" in response.data
