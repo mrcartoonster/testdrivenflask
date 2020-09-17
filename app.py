@@ -26,3 +26,8 @@ def add_stock():
 @app.route("/stocks")
 def list_stocks():
     return render_template("stocks.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html", company_name="TestDriven.io")
