@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Flask Stock Portfolio App</title>
-</head>
-<body>
+    <!--Local CSS file for styling the application-->
+    <link rel="stylesheet" href="{{ url_for('static',
+                                    filename='css/base_style.css') }}">
+    <!--Place favicon.png here!-->
+    <link rel="shortcut icon" href="{{ url_for('static',
+               filename='img/favicon.png') }}">
+    <!--Additional styling-->
+    {% block styling %}
+    {% endblock %}
+  </head>
+  <body>
     <header>
-        <h1>Flask Stock Portfolio App</h1>
+      <h1>Flask Stock Portfolio App</h1>
     </header>
 
     <div>
-        <! -- child template -->
-        {% block content %}
-        {% endblock %}
+      <! -- child template -->
+      {% block content %}
+      {% endblock %}
     </div>
-</body>
+  </body>
 </html>
