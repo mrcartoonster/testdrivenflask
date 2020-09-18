@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import (
+    Flask,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 app = Flask(__name__)
 
@@ -18,6 +26,9 @@ def add_stock():
         session["stock_symbol"] = request.form["stock_symbol"]
         session["number_of_shares"] = request.form["number_of_shares"]
         session["purchase_price"] = request.form["purchase_price"]
+
+        flash(f"Added a new stock ({request.form['stock_symbol']})!")
+
         return redirect((url_for("list_stocks")))
 
     return render_template("add_stock.html")

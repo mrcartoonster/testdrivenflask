@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block styling %}
+  <link rel="stylesheet" href="{{ url_for('static',
+             filename='add_stock_style.css') }}">
+{% endblock %}
 {% block content %}
   <h2>Add a Stock:</h2>
   <form method="post">
@@ -15,4 +19,4 @@
     <br>
     <input type="submit">
   </form>
-  {% endblock %}
+{% endblock %}
