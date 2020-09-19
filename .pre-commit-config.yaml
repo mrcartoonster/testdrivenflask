@@ -77,7 +77,7 @@ repos:
     rev: 0.2.8
     hooks:
       - id: unimport
-        args: [--remove, --requirements, --include-star-import]
+        args: [--exclude='(__init__.py)' --remove, --requirements, --include-star-import]
 # Below is opinionated lintesr and formatters. Uncomment at your own risk!
 # -   repo: https://github.com/econchick/interrogate
 #     rev: 7a0823fb29ddcd955eaf3aa91e7e93c8ca6bfbfd

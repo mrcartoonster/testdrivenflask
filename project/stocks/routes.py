@@ -31,3 +31,8 @@ def add_stocks():
         )
         return redirect(url_for("stocks.list_stocks"))
     return render_template("stocks/add_stock.html")
+
+
+@stocks_blueprint.route("/stocks")
+def list_stocks():
+    return render_template("stocks/stocks.html")
