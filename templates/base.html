@@ -6,10 +6,10 @@
     <title>Flask Stock Portfolio App</title>
     <!--Local CSS file for styling the application-->
     <link rel="stylesheet" href="{{ url_for('static',
-                                       filename='css/base_style.css') }}">
+                                        filename='css/base_style.css') }}">
     <!--Place favicon.png here!-->
     <link rel="shortcut icon" href="{{ url_for('static',
-                                     filename='img/favicon.png') }}">
+                                      filename='img/favicon.png') }}">
     <!--Additional styling-->
     {% block styling %}
     {% endblock %}
@@ -29,20 +29,27 @@
       </header>
     </header>
 
-    <!--flash messages-->
-    {% for message in get_flashed_messages() %}
-      <div class="flash-message">
-        <p>{{ message }}</p>
-        <span onclick="this.parentElement.style.opacity=0;">&times;</span>
-      </div>
-    {% endfor %}
-    <div>
-      <! -- child template -->
-      {% block content %}
-      {% endblock %}
-    </div>
-    <footer>
-      <h3>testdriven.io 2020</h3>
-    </footer>
+   <div class="messages">
+    <!--flash messages - supported categories: success, info , error,
+      message(default)-->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash-message flash-message-{{ category }}">
+              <p>{{ message }}</p>
+              <span onclick="this.parentElement.style.opacity=0;">&times;</span>
+            </div>
+          {% endfor %}
+          {% endif %}
+          {% endwith %}
+   </div>
+  <div>
+    <! -- child template -->
+    {% block content %}
+    {% endblock %}
+  </div>
+  <footer>
+    <h3>testdriven.io 2020</h3>
+  </footer>
   </body>
 </html>

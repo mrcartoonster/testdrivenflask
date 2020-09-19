@@ -16,6 +16,7 @@ app.secret_key = "BAD_SECRET_KEY"
 
 @app.route("/")
 def index():
+    app.logger.info("Calling the index function")
     return render_template("index.html")
 
 
@@ -27,7 +28,10 @@ def add_stock():
         session["number_of_shares"] = request.form["number_of_shares"]
         session["purchase_price"] = request.form["purchase_price"]
 
-        flash(f"Added a new stock ({request.form['stock_symbol']})!")
+        flash(
+            f"Added a new stock ({request.form['stock_symbol']})!",
+            "success",
+        )
 
         return redirect((url_for("list_stocks")))
 
@@ -41,4 +45,5 @@ def list_stocks():
 
 @app.route("/about")
 def about():
+    flash("Thank for learning about this site!", "site")
     return render_template("about.html", company_name="TestDriven.io")
