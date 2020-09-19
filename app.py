@@ -34,6 +34,8 @@ app.logger.info("Starting the Flask stock portfolio...")
 
 @app.route("/")
 def index():
+    """Adding a logger as well."""
+
     app.logger.info("Calling the index function")
     return render_template("index.html")
 
