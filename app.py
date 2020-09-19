@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask
@@ -7,11 +8,13 @@ from flask.logging import default_handler
 
 app = Flask(__name__)
 
-app.secret_key = "BAD_SECRET_KEY"
+# Configuration the Flask applicatio
+config_type = os.getenv("CONFIG_TYPE", default="config.DevelopmentConfig")
+app.config.from_object(config_type)
 
 # Logging configuration
 file_handler = RotatingFileHandler(
-    "flask-stock-portfolio.log",
+    "instance/flask-stock-portfolio.log",
     maxBytes=16384,
     backupCount=20,
 )
