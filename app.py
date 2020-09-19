@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from flask import (
     Flask,
     flash,
@@ -12,6 +14,22 @@ from flask import (
 app = Flask(__name__)
 
 app.secret_key = "BAD_SECRET_KEY"
+
+# Logging configuration
+file_handler = logging.FileHandler(
+    "flask_stock_portfolio.log",
+    maxBytes=16384,
+    backupCount=20,
+)
+file_formatter = logging.Formatter(
+    "%(asctime)s %(levelname)s: %(message)s [in %(filename)s:%(lineno)d]",
+)
+file_handler.setFormatter(file_formatter)
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+
+# Log that the Flask application is starting.
+app.logger.info("Starting the Flask stock portfolio...")
 
 
 @app.route("/")
@@ -32,6 +50,8 @@ def add_stock():
             f"Added a new stock ({request.form['stock_symbol']})!",
             "success",
         )
+
+        app.logger.info(f"Added new stock ({request.form['stock_symbol']})!")
 
         return redirect((url_for("list_stocks")))
 
