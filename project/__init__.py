@@ -70,7 +70,7 @@ def register_app_callbacks(app):
             "Calling teardown_request() for the Flask application...",
         )
 
-    @app.tearodwn_appcontext
+    @app.teardown_appcontext
     def app_teardown_appcontext(error=None):
         app.logger.info(
             "Calling teardown_appcontext() for the Flask application...",
