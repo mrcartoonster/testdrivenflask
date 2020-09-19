@@ -2,7 +2,7 @@
 import os
 
 
-class Config:
+class Config(object):
     FLASK_ENV = "development"
     DEBUG = False
     TESTING = False

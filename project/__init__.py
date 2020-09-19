@@ -15,9 +15,9 @@ def create_app():
     config_type = os.getenv("CONFIG_TYPE", "config.DevelopmentConfig")
     app.config.from_object(config_type)
 
-    # Registering blueprints
     register_blueprints(app)
     configure_logging(app)
+    register_app_callbacks(app)
     return app
 
 
@@ -26,11 +26,14 @@ def register_blueprints(app):
     from project.stocks import stocks_blueprint
     from project.users import users_blueprint
 
+    # Since the application instance is now created, register each Blueprint
+    # with the Flask application instance (app)
     app.register_blueprint(stocks_blueprint)
     app.register_blueprint(users_blueprint, url_prefix="/users")
 
 
 def configure_logging(app):
+    # Logging Configuration
     file_handler = RotatingFileHandler(
         "instance/flask-stock-portfolio.log",
         maxBytes=16384,
@@ -47,3 +50,28 @@ def configure_logging(app):
     app.logger.removeHandler(default_handler)
 
     app.logger.info("Starting the Flask Stock Portfolio App...")
+
+
+def register_app_callbacks(app):
+    @app.before_request
+    def app_before_request():
+        app.logger.info(
+            "Calling before_requests() for the Flask application...",
+        )
+
+    @app.after_request
+    def app_after_request(response):
+        app.logger.info("Calling after_request() for the Flask application...")
+        return response
+
+    @app.teardown_request
+    def app_teardown_request(error=None):
+        app.logger.info(
+            "Calling teardown_request() for the Flask application...",
+        )
+
+    @app.tearodwn_appcontext
+    def app_teardown_appcontext(error=None):
+        app.logger.info(
+            "Calling teardown_appcontext() for the Flask application...",
+        )
