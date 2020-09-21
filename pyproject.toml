@@ -14,6 +14,7 @@ prettyprinter = "^0.18.0"
 pytest = "^6.0.2"
 pytest-emoji = "^0.2.0"
 pytest-picked = "^0.4.4"
+pre-commit = "^2.7.1"
 
 [tool.pytest.ini_options]
 addopts = "-rssxX -l --tb=short --strict --emoji -vvv"
