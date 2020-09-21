@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
+from flask import current_app
 
 from project import create_app
 
@@ -9,7 +10,9 @@ def test_client():
     flask_app = create_app()
     flask_app.config.from_object("config.TestingConfig")
 
-    # Create a test client using the Flask application configured for testing
-    testing_client = flask_app.test_client()
-
-    return testing_client
+    # Create a test client using the Flask application configured for testing.
+    with flask_app.test_client() as testing_client:
+        # Establish an application context before accessing the logger.
+        with flask_app.app_context():
+            current_app.logger.info("In the test_client() fixture...")
+        yield testing_client  # Where the tests are going one.
