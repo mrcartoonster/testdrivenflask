@@ -17,6 +17,7 @@ pytest-picked = "^0.4.4"
 pre-commit = "^2.7.1"
 coverage = "^5.3"
 pytest-cov = "^2.10.1"
+pytest-pythonpath = "^0.7.3"
 
 [tool.pytest.ini_options]
 addopts = "-rssxX -l --tb=short --strict --emoji -vvv"
