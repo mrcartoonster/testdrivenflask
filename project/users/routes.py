@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import flash, render_template
+from flask import abort, flash, render_template
 
 from . import users_blueprint
 
@@ -8,3 +8,9 @@ from . import users_blueprint
 def about():
     flash("Thanks for learning about this site!", "info")
     return render_template("users/about.html", company_name="TestDriven.io")
+
+
+# 403 error example
+@users_blueprint.route("/admin")
+def admin():
+    abort(403)

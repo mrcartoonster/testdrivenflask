@@ -3,7 +3,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-from flask import Flask
+from flask import Flask, render_template
 from flask.logging import default_handler
 
 
@@ -17,7 +17,7 @@ def create_app():
 
     register_blueprints(app)
     configure_logging(app)
-    register_app_callbacks(app)
+    register_error_pages(app)
     return app
 
 
@@ -52,26 +52,11 @@ def configure_logging(app):
     app.logger.info("Starting the Flask Stock Portfolio App...")
 
 
-def register_app_callbacks(app):
-    @app.before_request
-    def app_before_request():
-        app.logger.info(
-            "Calling before_requests() for the Flask application...",
-        )
+def register_error_pages(app):
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("404.html"), 404
 
-    @app.after_request
-    def app_after_request(response):
-        app.logger.info("Calling after_request() for the Flask application...")
-        return response
-
-    @app.teardown_request
-    def app_teardown_request(error=None):
-        app.logger.info(
-            "Calling teardown_request() for the Flask application...",
-        )
-
-    @app.teardown_appcontext
-    def app_teardown_appcontext(error=None):
-        app.logger.info(
-            "Calling teardown_appcontext() for the Flask application...",
-        )
+    @app.errorhandler(405)
+    def method_not_found(e):
+        return render_template("405.html"), 405
