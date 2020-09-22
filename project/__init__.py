@@ -5,6 +5,9 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask, render_template
 from flask.logging import default_handler
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 def create_app():
@@ -15,9 +18,11 @@ def create_app():
     config_type = os.getenv("CONFIG_TYPE", "config.DevelopmentConfig")
     app.config.from_object(config_type)
 
+    initialize_extensions(app)
     register_blueprints(app)
     configure_logging(app)
     register_error_pages(app)
+
     return app
 
 
@@ -60,3 +65,7 @@ def register_error_pages(app):
     @app.errorhandler(405)
     def method_not_found(e):
         return render_template("405.html"), 405
+
+
+def initialize_extensions(app):
+    db.init_app(app)
