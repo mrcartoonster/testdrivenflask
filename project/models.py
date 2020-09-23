@@ -3,8 +3,7 @@ from project import db
 
 
 class Stock(db.Model):
-    """
-    Class the represents a purchased stock in a portolio
+    """Class the represents a purchased stock in a portolio.
 
     The following attributes of a stock are stored in this table:
         stock symbol (type: string)
@@ -29,11 +28,17 @@ class Stock(db.Model):
     purchase_price = db.Column(db.Integer, nullable=False)
 
     def __init__(
-        self, stock_symbol: str, number_of_shares: str, purchase_price: str
+        self,
+        stock_symbol: str,
+        number_of_shares: str,
+        purchase_price: str,
     ):
         self.stock_symbol = stock_symbol
         self.number_of_shares = int(number_of_shares)
         self.purchase_price = int(float(purchase_price) * 100)
 
     def __repr__(self):
-        return f"{self.stock_symbol} - {self.number_of_shares} shares purchased at ${self.purchase_price / 100}"
+        return (
+            f"{self.stock_symbol} - {self.number_of_shares} "
+            "shares purchased at ${self.purchase_price / 100}"
+        )

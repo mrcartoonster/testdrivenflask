@@ -5,9 +5,11 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
+
+from project import db
+from project.models import Stock
 
 from . import stocks_blueprint
 
@@ -33,19 +35,31 @@ def index():
 
 @stocks_blueprint.route("/add_stock", methods=["GET", "POST"])
 def add_stocks():
-    # save the form data to the session object.
+    """View that for /add_stocs that will capture stock information from form
+    and place it into our database."""
     if request.method == "POST":
-        session["stock_symbol"] = request.form["stock_symbol"]
-        session["number_of_shares"] = request.form["number_of_shares"]
-        session["purchase_price"] = request.form["purchase_price"]
-        flash(f"Added new stock ({request.form['stock_symbol']})!", "success")
+        # Save the form data to the database.
+        new_stock = Stock(
+            request.form["stock_symbol"],
+            request.form["number_of_shares"],
+            request.form["purchase_price"],
+        )
+        db.session.add(new_stock)
+        db.session.commit()
+
+        flash(
+            f"Added new stock ({ request.form['stock_symbol'] })!",
+            "success",
+        )
         current_app.logger.info(
-            f"Added new stock ({request.form['stock_symbol']})!",
+            f"Added new stock ({ request.form['stock_symbol'] })!",
         )
         return redirect(url_for("stocks.list_stocks"))
-    return render_template("stocks/add_stock.html")
+    else:
+        return render_template("stocks/add_stock.html")
 
 
 @stocks_blueprint.route("/stocks")
 def list_stocks():
-    return render_template("stocks/stocks.html")
+    stocks = Stock.query.order_by(Stock.id).all()
+    return render_template("stocks/stocks.html", stocks=stocks)

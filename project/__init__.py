@@ -5,9 +5,11 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask, render_template
 from flask.logging import default_handler
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+db_migration = Migrate
 
 
 def create_app():
@@ -68,4 +70,11 @@ def register_error_pages(app):
 
 
 def initialize_extensions(app):
+    """Third Part Modules.
+
+    Below are the third party apps being initialized for use with the
+    flask app.
+    """
+
     db.init_app(app)
+    db_migration.__init__(app, db)
