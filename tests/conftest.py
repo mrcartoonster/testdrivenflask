@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from flask import current_app
 
-from project import create_app
+from project import create_app, db
 from project.models import Stock
 
 
@@ -15,8 +14,17 @@ def test_client():
     with flask_app.test_client() as testing_client:
         # Establish an application context before accessing the logger.
         with flask_app.app_context():
-            current_app.logger.info("In the test_client() fixture...")
+            flask_app.logger.info(
+                "Creating database tables in test_client fixture",
+            )
+
+            # Create the database and the database tables.
+            db.create_all()
+
         yield testing_client  # Where the tests are going one.
+
+        with flask_app.app_context():
+            db.drop_all()
 
 
 @pytest.fixture(scope="module")
