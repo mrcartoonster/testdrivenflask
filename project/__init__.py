@@ -9,7 +9,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-db_migration = Migrate
+db_migration = Migrate()
 
 
 def create_app():
@@ -20,10 +20,10 @@ def create_app():
     config_type = os.getenv("CONFIG_TYPE", "config.DevelopmentConfig")
     app.config.from_object(config_type)
 
-    initialize_extensions(app)
     register_blueprints(app)
     configure_logging(app)
     register_error_pages(app)
+    initialize_extensions(app)
 
     return app
 
@@ -60,6 +60,11 @@ def configure_logging(app):
 
 
 def register_error_pages(app):
+    """Error pages registration.
+
+    Error handlers for our 404 and 405 pages.
+    """
+
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template("404.html"), 404
