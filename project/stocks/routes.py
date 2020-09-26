@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import click
 from flask import (
     current_app,
     flash,
@@ -14,16 +15,38 @@ from project.models import Stock
 from . import stocks_blueprint
 
 
+@stocks_blueprint.cli.command("create_default_set")
+def create_default_set():
+    """Create three new stocks and add them to the database."""
+    stock1 = Stock("HD", "25", "247.29")
+    stock2 = Stock("TWTR", "230", "31.89")
+    stock3 = Stock("DIS", "65", "118.77")
+    db.session.bulk_save_objects([stock1, stock2, stock3])
+    db.session.commit()
+
+
+@stocks_blueprint.cli.command("create")
+@click.argument("symbol")
+@click.argument("number_of_shares")
+@click.argument("purchase_price")
+def create(symbol, number_of_shares, purchase_price):
+    """Create a new stock and add it to the database."""
+
+    stock = Stock(symbol, number_of_shares, purchase_price)
+    db.session.add(stock)
+    db.session.commit()
+
+
 @stocks_blueprint.before_request
 def stocks_before_request():
     current_app.logger.info(
-        "Calling before_request() for the stocks blueprinte...",
+        "Calling before_request() for the stocks blueprints...",
     )
 
 
 @stocks_blueprint.after_request
 def stocks_after_request(response):
-    current_app.logger.info("Callin after_request() for the stocks blueprint")
+    current_app.logger.info("Calling after_request() for the stocks blueprint")
     return response
 
 
