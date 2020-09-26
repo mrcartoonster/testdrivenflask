@@ -5,6 +5,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
+    BCRYPT_LOG_ROUNDS = 15
     FLASK_ENV = "development"
     DEBUG = False
     TESTING = False

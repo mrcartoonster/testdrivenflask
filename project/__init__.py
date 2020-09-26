@@ -5,12 +5,14 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask, render_template
 from flask.logging import default_handler
+from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from rich.logging import RichHandler
 
 db = SQLAlchemy()
 db_migration = Migrate()
+bcrypt = Bcrypt()
 
 
 def create_app():
@@ -93,3 +95,4 @@ def initialize_extensions(app):
 
     db.init_app(app)
     db_migration.__init__(app, db)
+    bcrypt.init_app(app)

@@ -11,3 +11,11 @@ def test_new_stock(new_stock):
     assert new_stock.stock_symbol == "AAPL"
     assert new_stock.number_of_shares == 16
     assert new_stock.purchase_price == 40678
+
+
+def test_new_user(new_user):
+    """GIVEN a User Model WHEN a new User object is created THEN check the
+    email is valid and the password does not equal password provided."""
+
+    assert new_user.email == "patrick@email.com"
+    assert new_user.password != "FlaskIsAwesome123"
