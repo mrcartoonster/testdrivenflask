@@ -7,6 +7,7 @@ from flask import Flask, render_template
 from flask.logging import default_handler
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from rich.logging import RichHandler
 
 db = SQLAlchemy()
 db_migration = Migrate()
@@ -41,16 +42,25 @@ def register_blueprints(app):
 
 def configure_logging(app):
     # Logging Configuration
+
+    shell_handler = RichHandler()
     file_handler = RotatingFileHandler(
         "instance/flask-stock-portfolio.log",
         maxBytes=16384,
         backupCount=20,
     )
+
+    shell_formatter = logging.Formatter("%(message)s")
     file_formatter = logging.Formatter(
         "%(asctime)s %(levelname)s: %(message)s [in %(filename)s:%(lineno)d]",
     )
+    shell_handler.setFormatter(shell_formatter)
     file_handler.setFormatter(file_formatter)
+
+    shell_handler.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
+
+    app.logger.addHandler(shell_handler)
     app.logger.addHandler(file_handler)
 
     # Remove the default logger configured by Flask
