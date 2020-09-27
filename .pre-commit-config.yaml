@@ -38,14 +38,27 @@ repos:
     -   id: requirements-txt-fixer
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]  # Preserve Markdown hard linebreaks
--   repo: https://github.com/psf/black
-    rev: 20.8b1
+-   repo: https://github.com/hakancelik96/unimport
+    rev: 0.2.8
     hooks:
-    -   id: black
+      - id: unimport
+        args: [--exclude='(__init__.py)' --remove, --requirements, --include-star-import]
+-   repo: https://github.com/myint/docformatter
+    rev: v1.3.1
+    hooks:
+      - id: docformatter
+        args: [--in-place]
+-   repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.0.1
+    hooks:
+    -   id: add-trailing-comma
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.3
+    hooks:
+    -   id: flake8
         args:
-          - --target-version=py38
-          - --line-length=79
-          - --verbose
+          - --doctests
+          - --extend-ignore=E402, F401 app/main/__init__.py
 -   repo: https://github.com/timothycrosley/isort
     rev: 5.5.0
     hooks:
@@ -57,27 +70,14 @@ repos:
           - --py=38
           - --profile=black
           - -l=79
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.3
+-   repo: https://github.com/psf/black
+    rev: 20.8b1
     hooks:
-    -   id: flake8
+    -   id: black
         args:
-          - --doctests
-          - --extend-ignore=E402, F401 app/main/__init__.py
--   repo: https://github.com/asottile/add-trailing-comma
-    rev: v2.0.1
-    hooks:
-    -   id: add-trailing-comma
--   repo: https://github.com/myint/docformatter
-    rev: v1.3.1
-    hooks:
-      - id: docformatter
-        args: [--in-place]
--   repo: https://github.com/hakancelik96/unimport
-    rev: 0.2.8
-    hooks:
-      - id: unimport
-        args: [--exclude='(__init__.py)' --remove, --requirements, --include-star-import]
+          - --target-version=py38
+          - --line-length=79
+          - --verbose
 # Below is opinionated lintesr and formatters. Uncomment at your own risk!
 # -   repo: https://github.com/econchick/interrogate
 #     rev: 7a0823fb29ddcd955eaf3aa91e7e93c8ca6bfbfd
