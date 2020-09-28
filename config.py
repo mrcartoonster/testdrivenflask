@@ -4,7 +4,7 @@ import os
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config(object):
+class Config:
     BCRYPT_LOG_ROUNDS = 15
     FLASK_ENV = "development"
     DEBUG = False
@@ -31,3 +31,5 @@ class TestingConfig(Config):
         "TEST_DATABASE_URI",
         default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'test.db')}",
     )
+
+    BCRYP_LOG_ROUNDS = 4

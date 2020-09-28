@@ -48,7 +48,6 @@ class Stock(db.Model):
         )
 
 
-@dataclass
 class User(db.Model):
     """Class that represents a user of the applications.
 
@@ -61,8 +60,8 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id: int = db.Column(db.Integer, primary_key=True)
-    email: str = db.Column(db.String, unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String, unique=True)
     password_hashed = db.Column(db.String(60))
 
     def __init__(self, email: str, password_plaintext: str):
@@ -77,3 +76,6 @@ class User(db.Model):
             self.password_hashed,
             password_plaintext,
         )
+
+    def __repr__(self):
+        return f"<User: {self.email}>"
