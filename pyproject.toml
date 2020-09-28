@@ -14,6 +14,8 @@ flask-shell-ipython = "^0.4.1"
 flask-migrate = "^2.5.3"
 rich = "^7.0.0"
 flask-bcrypt = "^0.7.1"
+flask-wtf = "^0.14.3"
+email_validator = "^1.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.2"

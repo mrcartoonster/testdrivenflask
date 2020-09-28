@@ -15,6 +15,7 @@ class Config:
         default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'app.db')}",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_ENABLED = True
 
 
 class ProductionConfig(Config):
