@@ -31,7 +31,7 @@ def admin():
 
 @users_blueprint.route("/register", methods=["GET", "POST"])
 def register():
-    form = RegistrationForm
+    form = RegistrationForm()
 
     if request.method == "POST":
         if form.validate_on_submit():

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block styling %}
+  <link rel="stylesheet" href="{{ url_for('stacit',
+  filename='css/form_style.css') }}">
+  {% endblock %}
+
+{% block content %}
+  <h2 class="form-heading">User Registration</h2>
+
+  <form method="post">
+    {{ form.csrf_token }}
+
+    {{ form.email.label }}
+    {{ form.email }}
+    {% fr error in form.email.errors %}
+
+  </form>
