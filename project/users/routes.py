@@ -41,19 +41,16 @@ def register():
                 db.session.commit()
                 flash(f"Thanks for registering, {new_user.email}!")
                 current_app.logger.info(
-                    f"Registered new user: ({form.email.data})",
+                    f"Registered new user: ({form.email.data})!",
                 )
                 return redirect(url_for("stocks.index"))
-
             except IntegrityError:
                 db.session.rollback()
                 flash(
                     f"ERROR! Email ({form.email.data}) already exists.",
                     "error",
                 )
-
         else:
             flash("Error in form data!")
 
-    else:
-        return render_template("users/register.html", form=form)
+    return render_template("users/register.html", form=form)

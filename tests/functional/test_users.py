@@ -11,8 +11,8 @@ def test_get_registration_page(test_client):
     assert response.status_code == 200
     assert b"Flask Stock Portfolio App" in response.data
     assert b"User Registration" in response.data
-    assert b"Email:" in response.data
-    assert b"Password:" in response.data
+    assert b"Email" in response.data
+    assert b"Password" in response.data
 
 
 def test_valid_registration(test_client):
@@ -21,12 +21,13 @@ def test_valid_registration(test_client):
     response is valid and the user is registered."""
 
     response = test_client.post(
-        data={"email": "partick@email.com", "password": "FlaskIsAwesome123"},
+        "/users/register",
+        data={"email": "patrick@email.com", "password": "FlaskIsAwesome123"},
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Thank for registring, patrick@email.com!" in response.data
+    assert b"Thanks for registering, patrick@email.com" in response.data
     assert b"Flask Stock Portfolio App" in response.data
 
 
@@ -36,7 +37,7 @@ def test_invalid_registration(test_client):
     password) THEN check an error message is returned to the user."""
 
     response = test_client.post(
-        "/usrs/register",
+        "/users/register",
         data={"email": "patrick2@email.com", "password": ""},  # No password
         follow_redirects=True,
     )

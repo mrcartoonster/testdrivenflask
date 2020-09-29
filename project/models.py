@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from dataclasses import dataclass
-
-from flask import current_app
-
 from project import bcrypt, db
 
 
@@ -49,13 +45,13 @@ class Stock(db.Model):
 
 
 class User(db.Model):
-    """Class that represents a user of the applications.
+    """Class that represents a user of the application.
 
     The following attributes of a user are stored in this table:
-        * email -email address of the user
+        * email - email address of the user
         * hashed password - hashed password (using Flask-Bcrypt)
 
-    REMEMBER: Never store the plaintext password in a dtabase!
+    REMEMBER: Never store the plaintext password in a database!
     """
 
     __tablename__ = "users"
@@ -68,7 +64,7 @@ class User(db.Model):
         self.email = email
         self.password_hashed = bcrypt.generate_password_hash(
             password_plaintext,
-            current_app.config.get("BCRYPT_LOG_ROUNDS"),
+            4,
         ).decode("utf-8")
 
     def is_password_correct(self, password_plaintext: str):

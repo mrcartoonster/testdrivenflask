@@ -18,4 +18,4 @@ def test_new_user(new_user):
     email is valid and the password does not equal password provided."""
 
     assert new_user.email == "patrick@email.com"
-    assert new_user.password != "FlaskIsAwesome123"
+    assert new_user.password_hashed != "FlaskIsAwesome123"
