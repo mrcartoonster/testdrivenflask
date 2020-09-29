@@ -34,3 +34,4 @@ class TestingConfig(Config):
     )
 
     BCRYP_LOG_ROUNDS = 4
+    WTF_CSRF_ENABLED = False

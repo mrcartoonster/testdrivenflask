@@ -8,9 +8,9 @@ from flask import (
     request,
     url_for,
 )
-from projcect import db
 from sqlalchemy.exc import IntegrityError
 
+from project import db
 from project.models import User
 
 from . import users_blueprint
