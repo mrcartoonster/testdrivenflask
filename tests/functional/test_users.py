@@ -11,8 +11,8 @@ def test_get_registration_page(test_client):
     assert response.status_code == 200
     assert b"Flask Stock Portfolio App" in response.data
     assert b"User Registration" in response.data
-    assert b"Email" in response.data
-    assert b"Password" in response.data
+    assert b"Email: " in response.data
+    assert b"Password: " in response.data
 
 
 def test_valid_registration(test_client):

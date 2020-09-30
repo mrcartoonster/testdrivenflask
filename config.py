@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from datetime import timedelta
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -8,6 +9,7 @@ class Config:
     BCRYPT_LOG_ROUNDS = 15
     FLASK_ENV = "development"
     DEBUG = False
+    REMEMBER_COOKIE_DURATION = timedelta(days=14)
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY", default="BAD_SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.getenv(
@@ -33,5 +35,5 @@ class TestingConfig(Config):
         default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'test.db')}",
     )
 
-    BCRYP_LOG_ROUNDS = 4
+    BCRYP_LOG_ROUNDS = 2
     WTF_CSRF_ENABLED = False

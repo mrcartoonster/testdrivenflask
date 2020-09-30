@@ -65,7 +65,6 @@ class User(db.Model):
         # May have to add current_app config here
         self.password_hashed = bcrypt.generate_password_hash(
             password_plaintext,
-            4,
         ).decode("utf-8")
 
     @property
