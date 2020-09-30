@@ -6,6 +6,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template
 from flask.logging import default_handler
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -15,6 +16,8 @@ db = SQLAlchemy()
 db_migration = Migrate()
 bcrypt = Bcrypt()
 csrf_protection = CSRFProtect()
+login = LoginManager()
+login.login_view = "users.login"
 
 
 def create_app():
@@ -94,8 +97,13 @@ def initialize_extensions(app):
     Below are the third party apps being initialized for use with the
     flask app.
     """
+    from project.models import User
 
     db.init_app(app)
     db_migration.__init__(app, db)
     bcrypt.init_app(app)
     csrf_protection.init_app(app)
+
+    @login.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))

@@ -100,3 +100,87 @@ def test_valid_login_and_logout(test_client, register_default_user):
         },
     )
     assert response.status_code == 200
+    assert b"Thanks for logging in, patrick@gmail.com!" in response.data
+    assert b"Flask Stock Portfolio App" in response.data
+    assert b"Please log in to access this page." not in response.data
+
+    """
+    GIVEN a Flask application
+    WHEN the '/users/logout' page is request (GET) for a logged in user
+    THEN check response is valid
+    """
+
+    response = test_client.get("/users/logout", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Goodbye!" in response.data
+    assert b"Flask Stock Portfolio App" in response.data
+    assert b"Please log in to access this page." not in response.data
+
+
+def test_invalid_login(test_client, register_default_user):
+    """GIVEN a Flask application WHEN the '/users/login' page is posted to
+    (POST) with invalid credentials (incorrect password) THEN check an error
+    message is returned to the user."""
+
+    response = test_client.post(
+        "users/login",
+        data={"email": "patrick@gmail.com", "password": "FlaskIsNotAwesome"},
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"ERROR! Incorrect login credentials." in response.data
+    assert b"Flask Stock Portfolio App" in response.data
+
+
+def test_valid_login_when_logged_in_already(
+    test_client,
+    register_default_user,
+):
+    """GIVEN a Flask application WHEN the '/users/login' page is posted to
+    (POST) with value credentials for a user already logged in THEN check a
+    warning is returned to the user."""
+
+    test_client.post(
+        "users/login",
+        data={
+            "email": "patrick@gmail.com",
+            "password": "FlaskIsAwesome123",
+        },
+        follow_redirects=True,
+    )
+
+    response = test_client.post(
+        "/users/login",
+        data={"email": "patrick@gmail.com", "password": "FlaskIsAwesome"},
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Already logged in!" in response.data
+    assert b"Flask Stock Portfolio App" in response.data
+
+
+def test_invalid_logout(test_client):
+    """GIVEN a Flask application WHEN the '/users/logout' page is posted to
+    (POST) THEN check that a 405 error is returned."""
+
+    response = test_client.post("/users/logout", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Goodbye!" not in response.data
+    assert b"Flask Stock Portfolio" in response.data
+    assert b"Metod Not Allowed" in response.data
+
+
+def test_invalid_logout_not_logged_in(test_client):
+    """GIVEN a Flask application WHEN the '/users/logout' page is requested
+    (GET) when the user is not logged in THEN check that the user is redirected
+    to tht login page."""
+
+    test_client.get("/users/logout", follow_redirects=True)
+    response = test_client.get("/users/logout", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Goodbye!" not in response.data
+    assert b"Flask Stock Portfolio App" in response.data
+    assert b"Login" in response.data
+    assert b"Please log in to access this page." in response.data

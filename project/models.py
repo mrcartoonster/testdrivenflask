@@ -68,6 +68,25 @@ class User(db.Model):
             4,
         ).decode("utf-8")
 
+    @property
+    def is_authenticated(self):
+        """return True if the user has been successfully registered."""
+        return True
+
+    @property
+    def is_active(self):
+        """Always True, as all users are active."""
+        return True
+
+    @property
+    def is_anonoymous(self):
+        """Always False, as anonymous users aren't supportted."""
+        return False
+
+    def get_id(self):
+        """Return the user ID as a unicode string (`str`)."""
+        return str(self.id)
+
     def is_password_correct(self, password_plaintext: str):
         return bcrypt.check_password_hash(
             self.password_hashed,
