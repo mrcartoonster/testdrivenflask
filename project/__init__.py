@@ -97,12 +97,15 @@ def initialize_extensions(app):
     Below are the third party apps being initialized for use with the
     flask app.
     """
-    from project.models import User
 
     db.init_app(app)
     db_migration.__init__(app, db)
     bcrypt.init_app(app)
     csrf_protection.init_app(app)
+    login.init_app(app)
+
+    # Flask-Login Configuration
+    from project.models import User
 
     @login.user_loader
     def load_user(user_id):
