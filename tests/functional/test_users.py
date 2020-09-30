@@ -74,3 +74,29 @@ def test_duplicate_registration(test_client):
     assert (
         b"ERROR! Email (patrick@hotmail.com) already exists." in response.data
     )
+
+
+def test_get_login_page(test_client):
+    """GIVEN a Flask application WHEN the '/users/login' page is requested
+    (GET) THEN check the response is valid."""
+
+    response = test_client.get("/users/login")
+    assert response.status_code == 200
+    assert b"Login" in response.data
+    assert b"Email" in response.data
+    assert b"Password" in response.data
+    assert b"Login" in response.data
+
+
+def test_valid_login_and_logout(test_client, register_default_user):
+    """GIVEN a Flask application WHEN the '/users/login' page is posted to
+    (POST) with valid credentials THEN check the response is valid."""
+
+    response = test_client(
+        "users/login",
+        data={
+            "email": "patrick@gmail.com",
+            "password": "FaskIsAwesome123",
+        },
+    )
+    assert response.status_code == 200

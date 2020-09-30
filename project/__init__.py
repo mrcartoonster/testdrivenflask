@@ -8,11 +8,13 @@ from flask.logging import default_handler
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 from rich.logging import RichHandler
 
 db = SQLAlchemy()
 db_migration = Migrate()
 bcrypt = Bcrypt()
+csrf_protection = CSRFProtect()
 
 
 def create_app():
@@ -96,3 +98,4 @@ def initialize_extensions(app):
     db.init_app(app)
     db_migration.__init__(app, db)
     bcrypt.init_app(app)
+    csrf_protection.init_app(app)

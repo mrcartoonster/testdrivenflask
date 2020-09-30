@@ -62,6 +62,7 @@ class User(db.Model):
 
     def __init__(self, email: str, password_plaintext: str):
         self.email = email
+        # May have to add current_app config here
         self.password_hashed = bcrypt.generate_password_hash(
             password_plaintext,
             4,

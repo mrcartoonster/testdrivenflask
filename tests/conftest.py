@@ -37,3 +37,11 @@ def new_stock():
 def new_user():
     user = User("patrick@email.com", "FlaskIsAwesome123")
     return user
+
+
+@pytest.fixture(scope="module")
+def register_default_user(test_client):
+    user = User("patrick@gmail.com", "FlaskIsAwesome123")
+    db.session.add(user)
+    db.session.commit()
+    return user
