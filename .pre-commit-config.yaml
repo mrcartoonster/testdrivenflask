@@ -38,22 +38,17 @@ repos:
     -   id: requirements-txt-fixer
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]  # Preserve Markdown hard linebreaks
--   repo: https://github.com/hakancelik96/unimport
-    rev: 0.2.8
-    hooks:
-      - id: unimport
-        args: [--exclude='(__init__.py)' --remove, --requirements, --include-star-import]
 -   repo: https://github.com/myint/docformatter
     rev: v1.3.1
     hooks:
       - id: docformatter
-        args: [--in-place]
+        args: [--in-place, --blank]
 -   repo: https://github.com/asottile/add-trailing-comma
     rev: v2.0.1
     hooks:
     -   id: add-trailing-comma
 -   repo: https://github.com/timothycrosley/isort
-    rev: 5.5.0
+    rev: 5.5.4
     hooks:
     -   id: isort
         args:
@@ -78,6 +73,15 @@ repos:
         args:
           - --doctests
           - --extend-ignore=E402, F401 app/main/__init__.py
+-   repo: https://github.com/hakancelik96/unimport
+    rev: 0.3.0
+    hooks:
+    -   id: unimport
+        args:
+          - --exclude='(__init__.py)'
+          - --remove
+          - --requirements
+          - --include-star-import
 # Below is opinionated lintesr and formatters. Uncomment at your own risk!
 # -   repo: https://github.com/econchick/interrogate
 #     rev: 7a0823fb29ddcd955eaf3aa91e7e93c8ca6bfbfd

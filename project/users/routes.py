@@ -92,3 +92,9 @@ def register():
             flash("Error in form data!")
 
     return render_template("users/register.html", form=form)
+
+
+@users_blueprint.route("/profile")
+@login_required
+def user_profile():
+    return render_template("users/profile.html")
