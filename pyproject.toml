@@ -36,6 +36,12 @@ markers = [
   "verify"
 ]
 
+[tool.unimport]
+exclude = 'project/users/__init__.py|project/stocks/__init__.py'
+gitignore = true
+requirements = true
+remove = true
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
