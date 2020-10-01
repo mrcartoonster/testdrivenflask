@@ -28,7 +28,7 @@ pytest-cov = "^2.10.1"
 pytest-pythonpath = "^0.7.3"
 
 [tool.pytest.ini_options]
-addopts = "-rssxX -l --tb=short --strict --emoji -vvv"
+addopts = "-rssxX -l --tb=short --strict"
 xfail_strict = "True"
 markers = [
   "smoke",

@@ -18,6 +18,7 @@ class Stock(db.Model):
 
     Note: This is why when I make my own Flask apps with dbs, I'll
     be using Postgres. Postgres as a money type!
+
     """
 
     __tablename__ = "stocks"
@@ -52,6 +53,7 @@ class User(db.Model):
         * hashed password - hashed password (using Flask-Bcrypt)
 
     REMEMBER: Never store the plaintext password in a database!
+
     """
 
     __tablename__ = "users"
