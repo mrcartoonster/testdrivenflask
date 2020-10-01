@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Tests for user registrations."""
+import pytest
 
 
+@pytest.mark.smoke
 def test_get_registration_page(test_client):
     """GIVEN a Flask application configured for testing WHEN the
     '/users/register' pages is requested (GET) THEN check the respons is
@@ -15,6 +17,7 @@ def test_get_registration_page(test_client):
     assert b"Password: " in response.data
 
 
+@pytest.mark.fire
 def test_valid_registration(test_client):
     """GIVEN a Flask application configured for testing WHEN the
     '/users/registr' page is posted to (POST) with valid data THEN check the
@@ -175,3 +178,15 @@ def test_invalid_logout_not_logged_in(test_client):
     assert b"Flask Stock Portfolio App" in response.data
     assert b"Login" in response.data
     assert b"Please log in to access this page." in response.data
+
+
+@pytest.mark.verify
+def test_user_profile_logged_in(test_client, log_in_default_user):
+    """GIVEN a Flask application WHEN the '/users/profile' page is requested
+    (GET) when the user is logged in THEN check that the profile for the
+    current user is displayed."""
+    response = test_client.get("/users/profile")
+    assert response.status_code == 200
+    assert b"Flask Stock Portfolio App" in response.data
+    assert b"User Profile" in response.data
+    assert b"Email: patrick@gmail.com" in response.data
