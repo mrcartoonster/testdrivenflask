@@ -38,11 +38,6 @@ repos:
     -   id: requirements-txt-fixer
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]  # Preserve Markdown hard linebreaks
--   repo: https://github.com/hakancelik96/unimport
-    rev: 0.2.8
-    hooks:
-      - id: unimport
-        args: [--exclude='(__init__.py)' --remove, --requirements, --include-star-import]
 -   repo: https://github.com/myint/docformatter
     rev: v1.3.1
     hooks:
