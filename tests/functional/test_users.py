@@ -198,3 +198,26 @@ def test_user_profile_not_logged_in(test_client):
     assert b"User Profile!" not in response.data
     assert b"Email: patrick@gmail.com" not in response.data
     assert b"Please log in to access this page." in response.data
+
+
+def test_login_with_next_valid_path(test_client, register_default_user):
+    """GIVEN a Flask appliction WHEN the 'users/login?next=%2Fusers%Fprofile'
+    pages is posted to (POST) with a valid user login THEN check that the user
+    is redirected to the user profile page."""
+
+    response = test_client.post(
+        "users/login?next=%2Fusers%2Fprofile",
+        data={
+            "email": "patrick@gmail.com",
+            "password": "FlaskIsAwesome123",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Flask Stock Portfolio App" in response.data
+    assert b"User Profile" in response.data
+    assert b"Email: patrick@gmail.com" in response.data
+
+    # Log out the user - Clean up!
+    test_client.get("/users/logout", follow_redirects=True)

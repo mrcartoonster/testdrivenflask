@@ -6,48 +6,52 @@
     <title>Flask Stock Portfolio App</title>
     <!--Local CSS file for styling the application-->
     <link rel="stylesheet" href="{{ url_for('static',
-                                        filename='css/base_style.css') }}">
+                                           filename='css/base_style.css') }}">
     <!--Place favicon.png here!-->
     <link rel="shortcut icon" href="{{ url_for('static',
-                                      filename='img/favicon.png') }}">
+                                         filename='img/favicon.png') }}">
     <!--Additional styling-->
     {% block styling %}
     {% endblock %}
-  </head>
-  <body>
-  <header>
-  <nav class="nav">
-    <ul class="nav-list">
-      <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.index') }}">Flask Stock Portfolio App</a></li>
-    </ul>
-    <ul class="nav-list">
-      <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.list_stocks') }}">List Stocks</a></li>
-      <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.add_stocks') }}">Add Stock</a></li>
-    </ul>
-  </nav>
-</header>
-
-   <div class="messages">
-    <!--flash messages - supported categories: success, info , error,
-      message(default)-->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="flash-message flash-message-{{ category }}">
-              <p>{{ message }}</p>
-              <span onclick="this.parentElement.style.opacity=0;">&times;</span>
-            </div>
-          {% endfor %}
+    <header>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.index') }}">Flask Stock Portfolio App</a></li>
+        </ul>
+        <ul class="nav-list">
+          {% if current_user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.list_stocks') }}">List Stocks</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.add_stock') }}">Add Stock</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('users.user_profile') }}">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('users.logout') }}">Logout</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('users.register') }}">Register</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('users.login') }}">Login</a></li>
           {% endif %}
-          {% endwith %}
-   </div>
-  <div>
-    <! -- child template -->
-    {% block content %}
-    {% endblock %}
-  </div>
-  <footer>
-    <h3>testdriven.io 2020</h3>
-  </footer>
-  </body>
+        </ul>
+      </nav>
+    </header>
+    <div class="messages">
+      <!--flash messages - supported categories: success, info , error,
+        message(default)-->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message flash-message-{{ category }}">
+                <p>{{ message }}</p>
+                <span onclick="this.parentElement.style.opacity=0;">&times;</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+    <div>
+      <! -- child template -->
+      {% block content %}
+      {% endblock %}
+    </div>
+    <footer>
+      <h3>testdriven.io 2020</h3>
+    </footer>
+    </body>
 </html>
