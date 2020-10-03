@@ -11,9 +11,10 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required, login_user, logout_user
+from flask_mail import Message
 from sqlalchemy.exc import IntegrityError
 
-from project import db
+from project import db, mail
 from project.models import User
 
 from . import users_blueprint
@@ -100,7 +101,16 @@ def register():
                 current_app.logger.info(
                     f"Registered new user: ({form.email.data})!",
                 )
-                return redirect(url_for("stocks.index"))
+                msg = Message(
+                    subject="Registration - Flask Stock Portfolio App",
+                    body=(
+                        "Thanks for registering with the "
+                        "Flask Stock Portfolio App!"
+                    ),
+                    recipients=[form.email.data],
+                )
+                mail.send(msg)
+                return redirect(url_for("users.login"))
             except IntegrityError:
                 db.session.rollback()
                 flash(

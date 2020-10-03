@@ -36,7 +36,7 @@ def test_valid_registration(test_client):
         assert b"Flask Stock Portfolio App" in response.data
         assert len(outbox) == 1
         assert outbox[0].subject == "Registration - Flask Stock Portfolio App"
-        assert outbox[0].sender == "flaskstockportfolioapp@gmail.com"
+        assert outbox[0].sender == "apikey"
         assert outbox[0].recipients[0] == "patrick@email.com"
 
 

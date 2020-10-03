@@ -7,6 +7,7 @@ from flask import Flask, render_template
 from flask.logging import default_handler
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -16,6 +17,7 @@ db = SQLAlchemy()
 db_migration = Migrate()
 bcrypt = Bcrypt()
 csrf_protection = CSRFProtect()
+mail = Mail()
 login = LoginManager()
 login.login_view = "users.login"
 
@@ -105,6 +107,7 @@ def initialize_extensions(app):
     bcrypt.init_app(app)
     csrf_protection.init_app(app)
     login.init_app(app)
+    mail.init_app(app)
 
     # Flask-Login Configuration
     from project.models import User
