@@ -3,6 +3,7 @@
 
 Specifically, this blueprint allows for user to add, edit, and delete
 stock data from their portfolio.
+
 """
 from flask import Blueprint
 

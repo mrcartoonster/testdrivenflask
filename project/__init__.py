@@ -80,6 +80,7 @@ def register_error_pages(app):
     """Error pages registration.
 
     Error handlers for our 404 and 405 pages.
+
     """
 
     @app.errorhandler(404)
@@ -96,6 +97,7 @@ def initialize_extensions(app):
 
     Below are the third party apps being initialized for use with the
     flask app.
+
     """
 
     db.init_app(app)

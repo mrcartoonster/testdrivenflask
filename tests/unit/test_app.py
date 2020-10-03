@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """This file (test_app.py) contains the unti test for the app.py file."""
 
-from app import app
-
 
 def test_index_page(test_client):
     """GIVEN a Flask application WHEN the '/' page is requested (GET) THEN

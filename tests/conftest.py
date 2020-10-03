@@ -9,6 +9,7 @@ from project.models import Stock, User
 def test_client():
     flask_app = create_app()
     flask_app.config.from_object("config.TestingConfig")
+    flask_app.extensions["mail"].suppress = True
 
     # Create a test client using the Flask application configured for testing.
     with flask_app.test_client() as testing_client:
@@ -45,3 +46,21 @@ def register_default_user(test_client):
     db.session.add(user)
     db.session.commit()
     return user
+
+
+@pytest.fixture(scope="function")
+def log_in_default_user(test_client, register_default_user):
+    # Log in the user
+    test_client.post(
+        "/users/login",
+        data={
+            "email": "patrick@gmail.com",
+            "password": "FlaskIsAwesome123",
+        },
+        follow_redirects=True,
+    )
+
+    yield register_default_user  # this is where the testing happens!
+
+    # Log out the user
+    test_client.get("/users/logout", follow_redirects=True)
