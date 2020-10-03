@@ -6,7 +6,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    BCRYPT_LOG_ROUNDS = 15
+    BCRYPT_LOG_ROUNDS = 4
     FLASK_ENV = "development"
     DEBUG = False
     REMEMBER_COOKIE_DURATION = timedelta(days=14)
@@ -35,5 +35,5 @@ class TestingConfig(Config):
         default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'test.db')}",
     )
 
-    BCRYP_LOG_ROUNDS = 2
+    BCRYPT_LOG_ROUNDS = 4
     WTF_CSRF_ENABLED = False

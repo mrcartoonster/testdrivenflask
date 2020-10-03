@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Tests for user registrations."""
+from project import mail
 
 
 def test_get_registration_page(test_client):
@@ -20,15 +21,23 @@ def test_valid_registration(test_client):
     '/users/registr' page is posted to (POST) with valid data THEN check the
     response is valid and the user is registered."""
 
-    response = test_client.post(
-        "/users/register",
-        data={"email": "patrick@email.com", "password": "FlaskIsAwesome123"},
-        follow_redirects=True,
-    )
+    with mail.record_messages() as outbox:
+        response = test_client.post(
+            "/users/register",
+            data={
+                "email": "patrick@email.com",
+                "password": "FlaskIsAwesome123",
+            },
+            follow_redirects=True,
+        )
 
-    assert response.status_code == 200
-    assert b"Thanks for registering, patrick@email.com" in response.data
-    assert b"Flask Stock Portfolio App" in response.data
+        assert response.status_code == 200
+        assert b"Thanks for registering, patrick@email.com" in response.data
+        assert b"Flask Stock Portfolio App" in response.data
+        assert len(outbox) == 1
+        assert outbox[0].subject == "Registration - Flask Stock Portfolio App"
+        assert outbox[0].sender == "flaskstockportfolioapp@gmail.com"
+        assert outbox[0].recipients[0] == "patrick@email.com"
 
 
 def test_invalid_registration(test_client):
@@ -221,3 +230,22 @@ def test_login_with_next_valid_path(test_client, register_default_user):
 
     # Log out the user - Clean up!
     test_client.get("/users/logout", follow_redirects=True)
+
+
+def test_login_with_next_invalid_path(test_client, register_default_user):
+    """GIVEN a Flask application WHEN the
+    'users/login?next=http://www.badsite.com' page is posted to (POST) with a
+    valid user login THEN check that a 40 (Bad Request) error is returned."""
+
+    response = test_client.post(
+        "users/login?next=http://www.badsite.com",
+        data={
+            "email": "patrick@gmail.com",
+            "password": "FlaskIsAwesome123",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 400
+    assert b"User Profile" not in response.data
+    assert b"Email: patrick@gmail.com" not in response.data

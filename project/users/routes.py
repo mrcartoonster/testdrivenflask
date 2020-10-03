@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from urllib.parse import urlparse
+
 from flask import (
     abort,
     current_app,
@@ -40,7 +42,24 @@ def login():
                 current_app.logger.info(
                     f"Logged in user: {current_user.email}",
                 )
-                return redirect(url_for("stocks.index"))
+                if not request.args.get("next"):
+                    return redirect(url_for("users.user_profile"))
+
+                next_url = request.args.get("next")
+                if (
+                    urlparse(next_url).scheme != ""
+                    or urlparse(next_url).netloc != ""
+                ):
+                    current_app.logger.info(
+                        f"Invalid next path in login request: {next_url}",
+                    )
+                    logout_user()
+                    return abort(400)
+
+                current_app.logger.info(
+                    f"Redirecting after valid login to: {next_url}",
+                )
+                return redirect(next_url)
 
         flash("ERROR! Incorrect login credentials.")
     return render_template("users/login.html", form=form)
