@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from threading import Thread
 from urllib.parse import urlparse
 
 from flask import (
     abort,
+    copy_current_request_context,
     current_app,
     flash,
     redirect,
@@ -101,6 +103,12 @@ def register():
                 current_app.logger.info(
                     f"Registered new user: ({form.email.data})!",
                 )
+
+                @copy_current_request_context
+                def send_email(message):
+                    with current_app.app_context():
+                        mail.send(message)
+
                 msg = Message(
                     subject="Registration - Flask Stock Portfolio App",
                     body=(
@@ -109,7 +117,9 @@ def register():
                     ),
                     recipients=[form.email.data],
                 )
-                mail.send(msg)
+                email_thread = Thread(target=send_email, args=[msg])
+                email_thread.start()
+
                 return redirect(url_for("users.login"))
             except IntegrityError:
                 db.session.rollback()
