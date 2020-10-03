@@ -4,8 +4,8 @@ file."""
 
 
 def test_new_stock(new_stock):
-    """GIVEN a Stock model WHEN a new Stock object is created THEN check the
-    symbol, number of shares, and purchase price fields are defined
+    """GIVEN a Stock model WHEN a new Stock object is created THEN check
+    the symbol, number of shares, and purchase price fields are defined
     corrrectly."""
 
     assert new_stock.stock_symbol == "AAPL"
@@ -14,8 +14,9 @@ def test_new_stock(new_stock):
 
 
 def test_new_user(new_user):
-    """GIVEN a User Model WHEN a new User object is created THEN check the
-    email is valid and the password does not equal password provided."""
+    """GIVEN a User Model WHEN a new User object is created THEN check
+    the email is valid and the password does not equal password
+    provided."""
 
     assert new_user.email == "patrick@email.com"
     assert new_user.password_hashed != "FlaskIsAwesome123"

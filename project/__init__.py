@@ -79,7 +79,8 @@ def configure_logging(app):
 
 
 def register_error_pages(app):
-    """Error pages registration.
+    """
+    Error pages registration.
 
     Error handlers for our 404 and 405 pages.
 
@@ -95,7 +96,8 @@ def register_error_pages(app):
 
 
 def initialize_extensions(app):
-    """Third Part Modules.
+    """
+    Third Part Modules.
 
     Below are the third party apps being initialized for use with the
     flask app.

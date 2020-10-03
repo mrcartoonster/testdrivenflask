@@ -220,6 +220,17 @@ curio = ["curio (>=1.2)", "sniffio (>=1.1)"]
 trio = ["trio (>=0.14.0)", "sniffio (>=1.1)"]
 
 [[package]]
+name = "docformatter"
+version = "1.3.1"
+description = "Formats docstrings to follow PEP 257."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+untokenize = "*"
+
+[[package]]
 name = "email-validator"
 version = "1.1.1"
 description = "A robust email syntax and deliverability validation library for Python 2.x/3.x."
@@ -822,6 +833,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "untokenize"
+version = "0.1.1"
+description = "Transforms tokens into original source code (while preserving whitespace)."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "urllib3"
 version = "1.25.10"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -891,7 +910,7 @@ locale = ["Babel (>=1.3)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "353097f0bf0ed377a3bab25d05c305f2482eb53e49a3d408c67d801ea07451b4"
+content-hash = "6379f19b2390d9e05f872af9babee99cf2fc4e83598f90467cccda8d309fe138"
 
 [metadata.files]
 alembic = [
@@ -1047,6 +1066,9 @@ distlib = [
 dnspython = [
     {file = "dnspython-2.0.0-py3-none-any.whl", hash = "sha256:40bb3c24b9d4ec12500f0124288a65df232a3aa749bb0c39734b782873a2544d"},
     {file = "dnspython-2.0.0.zip", hash = "sha256:044af09374469c3a39eeea1a146e8cac27daec951f1f1f157b1962fc7cb9d1b7"},
+]
+docformatter = [
+    {file = "docformatter-1.3.1.tar.gz", hash = "sha256:d8db663665becccac75737b2635a06076f2c832bf861322a7bfc512f0a9fa7e3"},
 ]
 email-validator = [
     {file = "email_validator-1.1.1-py2.py3-none-any.whl", hash = "sha256:5f246ae8d81ce3000eade06595b7bb55a4cf350d559e890182a1466a21f25067"},
@@ -1321,6 +1343,9 @@ typing-extensions = [
     {file = "typing_extensions-3.7.4.3-py2-none-any.whl", hash = "sha256:dafc7639cde7f1b6e1acc0f457842a83e722ccca8eef5270af2d74792619a89f"},
     {file = "typing_extensions-3.7.4.3-py3-none-any.whl", hash = "sha256:7cb407020f00f7bfc3cb3e7881628838e69d8f3fcab2f64742a5e76b2f841918"},
     {file = "typing_extensions-3.7.4.3.tar.gz", hash = "sha256:99d4073b617d30288f569d3f13d2bd7548c3a7e4c8de87db09a9d29bb3a4a60c"},
+]
+untokenize = [
+    {file = "untokenize-0.1.1.tar.gz", hash = "sha256:3865dbbbb8efb4bb5eaa72f1be7f3e0be00ea8b7f125c69cbd1f5fda926f37a2"},
 ]
 urllib3 = [
     {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},

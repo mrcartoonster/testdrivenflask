@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""add stocks table.
+"""
+add stocks table.
 
 Revision ID: e594c064bec1
 Revises:

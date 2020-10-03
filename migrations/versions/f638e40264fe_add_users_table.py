@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""add users table.
+"""
+add users table.
 
 Revision ID: f638e40264fe
 Revises: e594c064bec1

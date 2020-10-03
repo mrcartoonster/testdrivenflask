@@ -58,8 +58,8 @@ def index():
 
 @stocks_blueprint.route("/add_stock", methods=["GET", "POST"])
 def add_stock():
-    """View that for /add_stocs that will capture stock information from form
-    and place it into our database."""
+    """View that for /add_stocs that will capture stock information from
+    form and place it into our database."""
     if request.method == "POST":
         # Save the form data to the database.
         new_stock = Stock(
