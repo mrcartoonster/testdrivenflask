@@ -30,6 +30,7 @@ def test_client():
 
 @pytest.fixture(scope="module")
 def new_stock():
+    """Base Stocks to add."""
     stock = Stock("AAPL", "16", "406.78")
     return stock
 
