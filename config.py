@@ -25,7 +25,7 @@ class Config:
     MAIL_PORT = 587
     MAIL_USERNAME = os.getenv("MAIL_USERNAME", default="")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", default="")
-    MAIL_DEFAULT_SENDER = os.getenv("MAIL_USERNAME", default="")
+    MAIL_DEFAULT_SENDER = "mrcartoonster@gmail.com"
 
 
 class ProductionConfig(Config):

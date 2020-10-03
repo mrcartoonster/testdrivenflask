@@ -35,9 +35,13 @@ def test_valid_registration(test_client):
         assert b"Thanks for registering, patrick@email.com" in response.data
         assert b"Flask Stock Portfolio App" in response.data
         assert len(outbox) == 1
-        assert outbox[0].subject == "Registration - Flask Stock Portfolio App"
-        assert outbox[0].sender == "apikey"
+        assert (
+            outbox[0].subject
+            == "Flask Stock Portfolio App - Confirm Your Email Address"
+        )
+        assert outbox[0].sender == "mrcartoonster@gmail.com"
         assert outbox[0].recipients[0] == "patrick@email.com"
+        assert "http://localhost/users/confirm/" in outbox[0].html
 
 
 def test_invalid_registration(test_client):
