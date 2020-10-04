@@ -77,7 +77,12 @@ class User(db.Model):
     email_confirmed = db.Column(db.Boolean, default=False)
     email_confirmed_on = db.Column(db.DateTime)
 
-    def __init__(self, email: str, password_plaintext: str):
+    def __init__(
+        self,
+        email: str,
+        password_plaintext: str,
+        email_confirmation_sent_on=None,
+    ):
         self.email = email
         # May have to add current_app config here
         self.password_hashed = bcrypt.generate_password_hash(

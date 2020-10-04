@@ -28,7 +28,7 @@ from .forms import LoginForm, RegistrationForm
 
 def generate_confirmation_email(user_email):
     confirm_serializer = URLSafeTimedSerializer(
-        current_app.config.config["SECRET_KEY"],
+        current_app.config["SECRET_KEY"],
     )
 
     confirm_url = url_for(
@@ -175,7 +175,7 @@ def confirm_email(token):
             max_age=3600,
         )
     except BadSignature:
-        flash("The confirmation link is invalid or has expired", "error")
+        flash("The confirmation link is invalid or has expired.", "error")
         current_app.logger.info(
             "Invaid or exired confirmation link received "
             f"from IP address: {request.remote_addr}",

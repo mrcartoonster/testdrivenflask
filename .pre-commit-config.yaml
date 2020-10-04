@@ -80,7 +80,6 @@ repos:
         args:
           - --target-version=py38
           - --line-length=79
-          - --verbose
 
     # Flask8
 -   repo: https://gitlab.com/pycqa/flake8
