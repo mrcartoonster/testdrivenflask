@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from threading import Thread
 from urllib.parse import urlparse
 
@@ -14,6 +15,8 @@ from flask import (
 )
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_mail import Message
+from itsdangerous import URLSafeTimedSerializer
+from itsdangerous.exc import BadSignature
 from sqlalchemy.exc import IntegrityError
 
 from project import db, mail
@@ -21,6 +24,30 @@ from project.models import User
 
 from . import users_blueprint
 from .forms import LoginForm, RegistrationForm
+
+
+def generate_confirmation_email(user_email):
+    confirm_serializer = URLSafeTimedSerializer(
+        current_app.config.config["SECRET_KEY"],
+    )
+
+    confirm_url = url_for(
+        "users.confirm_email",
+        token=confirm_serializer.dumps(
+            user_email,
+            salt="email-confirmation-salt",
+        ),
+        _external=True,
+    )
+
+    return Message(
+        subject="Flask Stock Portfolio App - Confirm Your Email Address",
+        html=render_template(
+            "users/email_confirmation.html",
+            confirm_url=confirm_url,
+        ),
+        recipients=[user_email],
+    )
 
 
 @users_blueprint.route("/login", methods=["GET", "POST"])
@@ -96,7 +123,11 @@ def register():
     if request.method == "POST":
         if form.validate_on_submit():
             try:
-                new_user = User(form.email.data, form.password.data)
+                new_user = User(
+                    form.email.data,
+                    form.password.data,
+                    datetime.now(),
+                )
                 db.session.add(new_user)
                 db.session.commit()
                 flash(f"Thanks for registering, {new_user.email}!")
@@ -109,14 +140,7 @@ def register():
                     with current_app.app_context():
                         mail.send(message)
 
-                msg = Message(
-                    subject="Registration - Flask Stock Portfolio App",
-                    body=(
-                        "Thanks for registering with the "
-                        "Flask Stock Portfolio App!"
-                    ),
-                    recipients=[form.email.data],
-                )
+                msg = generate_confirmation_email(form.email.data)
                 email_thread = Thread(target=send_email, args=[msg])
                 email_thread.start()
 
@@ -137,3 +161,40 @@ def register():
 @login_required
 def user_profile():
     return render_template("users/profile.html")
+
+
+@users_blueprint.route("/confirm/<token>")
+def confirm_email(token):
+    try:
+        confirm_serializer = URLSafeTimedSerializer(
+            current_app.config["SECRET_KEY"],
+        )
+        email = confirm_serializer.loads(
+            token,
+            salt="email-confirmation-salt",
+            max_age=3600,
+        )
+    except BadSignature:
+        flash("The confirmation link is invalid or has expired", "error")
+        current_app.logger.info(
+            "Invaid or exired confirmation link received "
+            f"from IP address: {request.remote_addr}",
+        )
+        return redirect(url_for("users.login"))
+
+    user = User.query.filter_by(email=email).first()
+
+    if user.email_confirmed:
+        flash("Account already confirmed. Please login", "info")
+        current_app.logger.info(
+            f"Confirmation link received for a confirmed user: {user.email}",
+        )
+    else:
+        user.email_confirmed = True
+        user.email_confirmed = datetime.now()
+        db.session.add(user)
+        db.session.commit()
+        flash("Thank you for confirming youer email address!", "success")
+        current_app.logger.info(f"Email address confirmed for: {user.email}")
+
+    return redirect(url_for("stocks.index"))
