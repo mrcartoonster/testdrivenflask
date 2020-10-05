@@ -38,15 +38,28 @@ repos:
     -   id: requirements-txt-fixer
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]  # Preserve Markdown hard linebreaks
+          #
+    # Docformatter
 -   repo: https://github.com/myint/docformatter
     rev: v1.3.1
     hooks:
       - id: docformatter
-        args: [--in-place, --blank]
+        args:
+          - --in-place
+          - -r
+          - --blank
+          - --recursive
+          - --wrap-summaries=72
+          - --wrap-descriptions=72
+          - --pre-summary-newline
+
+    # Add trailing commas
 -   repo: https://github.com/asottile/add-trailing-comma
     rev: v2.0.1
     hooks:
     -   id: add-trailing-comma
+
+    # iSort
 -   repo: https://github.com/timothycrosley/isort
     rev: 5.5.0
     hooks:
@@ -58,6 +71,8 @@ repos:
           - --py=38
           - --profile=black
           - -l=79
+
+    # Black
 -   repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
@@ -65,7 +80,8 @@ repos:
         args:
           - --target-version=py38
           - --line-length=79
-          - --verbose
+
+    # Flask8
 -   repo: https://gitlab.com/pycqa/flake8
     rev: 3.8.3
     hooks:
@@ -73,6 +89,7 @@ repos:
         args:
           - --doctests
           - --extend-ignore=E402, F401 app/main/__init__.py
+            #
 # Below is opinionated lintesr and formatters. Uncomment at your own risk!
 # -   repo: https://github.com/econchick/interrogate
 #     rev: 7a0823fb29ddcd955eaf3aa91e7e93c8ca6bfbfd

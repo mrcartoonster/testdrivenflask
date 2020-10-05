@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 from project import bcrypt, db
 
 
 class Stock(db.Model):
-    """Class the represents a purchased stock in a portolio.
+    """
+    Class the represents a purchased stock in a portolio.
 
     The following attributes of a stock are stored in this table:
         stock symbol (type: string)
@@ -46,11 +49,19 @@ class Stock(db.Model):
 
 
 class User(db.Model):
-    """Class that represents a user of the application.
+    """
+    Class that represents a user of the application.
 
     The following attributes of a user are stored in this table:
         * email - email address of the user
-        * hashed password - hashed password (using Flask-Bcrypt)
+        * hashed_password - hashed password (using Flask-Bcrypt)
+        * registered_on - date & time tht the user registered
+        * email_confirmation_sent_on - date & time that the confirmation email
+            was sent
+        * email_confirmed - flag indcating if the userr's email address has
+            been confirmed
+        * email_confirmed_on - date & time that the user's email address was
+            confirmed
 
     REMEMBER: Never store the plaintext password in a database!
 
@@ -61,13 +72,27 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True)
     password_hashed = db.Column(db.String(60))
+    registered_on = db.Column(db.DateTime)
+    email_confirmation_sent_on = db.Column(db.DateTime)
+    email_confirmed = db.Column(db.Boolean, default=False)
+    email_confirmed_on = db.Column(db.DateTime)
 
-    def __init__(self, email: str, password_plaintext: str):
+    def __init__(
+        self,
+        email: str,
+        password_plaintext: str,
+        email_confirmation_sent_on=None,
+    ):
         self.email = email
         # May have to add current_app config here
         self.password_hashed = bcrypt.generate_password_hash(
             password_plaintext,
         ).decode("utf-8")
+        self.registered_on = datetime.now()
+        self.confirmation_sent_on = datetime.now()
+        self.email_confirmed_sent_on = datetime.now()
+        self.email_confirmed = False
+        self.email_confirmed_on = None
 
     @property
     def is_authenticated(self):

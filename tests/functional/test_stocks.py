@@ -2,8 +2,8 @@
 
 
 def test_get_add_stock_page(test_client):
-    """GIVEN a Flask application WHEN the '/add_stock' page is requested (GET)
-    THEN check the response is valid."""
+    """GIVEN a Flask application WHEN the '/add_stock' page is requested
+    (GET) THEN check the response is valid."""
     response = test_client.get("/add_stock")
     assert response.status_code == 200
     assert b"Flask Stock Portfolio App" in response.data
@@ -14,8 +14,9 @@ def test_get_add_stock_page(test_client):
 
 
 def test_post_add_stock_page(test_client):
-    """GIVEN a Flask application WHEN the '/add_stock' page is posted (POST)
-    THEN check that the user is redirected to the '/list_stocks' page."""
+    """GIVEN a Flask application WHEN the '/add_stock' page is posted
+    (POST) THEN check that the user is redirected to the '/list_stocks'
+    page."""
 
     response = test_client.post(
         "/add_stock",

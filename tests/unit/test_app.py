@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""This file (test_app.py) contains the unti test for the app.py file."""
+"""This file (test_app.py) contains the unti test for the app.py
+file."""
 
 
 def test_index_page(test_client):
-    """GIVEN a Flask application WHEN the '/' page is requested (GET) THEN
-    check the response is valid."""
+    """GIVEN a Flask application WHEN the '/' page is requested (GET)
+    THEN check the response is valid."""
 
     response = test_client.get("/")
     assert response.status_code == 200
@@ -13,8 +14,8 @@ def test_index_page(test_client):
 
 
 def test_about_page(test_client):
-    """GIVEN a Flask application WHEN the '/about' page is requested (GET) THEN
-    check the response is valid."""
+    """GIVEN a Flask application WHEN the '/about' page is requested
+    (GET) THEN check the response is valid."""
 
     response = test_client.get("users/about")
     assert b"Flask Stock Portfolio App" in response.data
