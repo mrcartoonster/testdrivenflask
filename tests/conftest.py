@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 import pytest
 
 from project import create_app, db
@@ -65,3 +67,22 @@ def log_in_default_user(test_client, register_default_user):
 
     # Log out the user
     test_client.get("/users/logout", follow_redirects=True)
+
+
+@pytest.fixture(scope="function")
+def confirm_email_default_user(test_client, log_in_default_user):
+    # Mark the user as having their email address confirmed
+    user = User.query.filter_by(email="patrick@gmail.com").first()
+    user.email_confirmed = True
+    user.email_confirmed_on = datetime(2020, 7, 8)
+    db.session.add(user)
+    db.session.commit()
+
+    yield user  # This is where the testing happens!
+
+    # Mark the user as not having their email address confirmed(clean up)
+    user = User.query.filter_by(email="patrick@gmail.com").first()
+    user.email_confirmed = False
+    user.email_confirmed_on = None
+    db.session.add(user)
+    db.session.commit()

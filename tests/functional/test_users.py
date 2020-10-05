@@ -43,7 +43,7 @@ def test_valid_registration(test_client):
             outbox[0].subject
             == "Flask Stock Portfolio App - Confirm Your Email Address"
         )
-        assert outbox[0].sender == "mrcartoonster@gmail.com"
+        assert outbox[0].sender == "flaskstockportfolioapp@gmail.com@gmail.com"
         assert outbox[0].recipients[0] == "patrick@email.com"
         assert "http://localhost/users/confirm/" in outbox[0].html
 
@@ -103,6 +103,7 @@ def test_get_login_page(test_client):
     assert b"Email" in response.data
     assert b"Password" in response.data
     assert b"Login" in response.data
+    assert b"Forgot your password?" in response.data
 
 
 def test_valid_login_and_logout(test_client, register_default_user):
@@ -327,3 +328,93 @@ def test_confirm_email_invalid(test_client):
     )
     assert response.status_code == 200
     assert b"The confirmation link is invalid or has expired." in response.data
+
+
+def test_get_password_reset_via_email(test_client):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email' page is requested (GET) THEN check
+    that the page is successfully returned."""
+
+    response = test_client.get(
+        "/users/passwrod_reset_via_email",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Password Reset via Email" in response.data
+    assert b"Email:" in response.data
+    assert b"Submt" in response.data
+
+
+def test_ost_password_reset_via_email_page_valid(
+    test_client,
+    confirm_email_default_user,
+):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email' page is posted to (POST) with a
+    valid email address THEN check that an email was queued up to
+    send."""
+
+    with mail.record_messages() as outbox:
+        response = test_client.post(
+            "/users/passwrod_reset_via_email",
+            data={
+                "email": "patrick@gmail.com",
+            },
+            follow_redirects=True,
+        )
+    assert response.status_code == 200
+    assert (
+        b"Please check your email for a password reset link." in response.data
+    )
+    assert len(outbox) == 1
+    assert (
+        outbox[0].subject
+        == "Flask Stock Portfolio App - Passwrod Reset Requested"
+    )
+    assert outbox[0].sender == "flaskstockportfolioapp@gmail.com"
+    assert outbox[0].recipients[0] == "patrick@gmail.com"
+    assert "Questions? Comments?" in outbox[0].html
+    assert "flaskstockportfolioapp@gmail.com" in outbox[0].html
+    assert "http://localhost/users/password_reset_via_token/" in outbox[0].html
+
+
+def test_post_password_reset_via_email_page(test_client):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email' pages is posted to (POST) with an
+    invalid email address THEN check that an error message is
+    flashed."""
+
+    with mail.record_messages() as outbox:
+        response = test_client.post(
+            "/users/password_reset_via_email",
+            data={"email": "notpatrick@gmail.com"},
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert len(outbox) == 0
+        assert b"Error! Invalid email address!" in response.data
+
+
+def test_post_password_reset_via_email_page_not_confirmed(
+    test_client,
+    log_in_default_user,
+):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email' page is posted to (POST) with an
+    eamil address that has note been confirmed THEN check that an error
+    message has flashed."""
+
+    with mail.record_messages() as outbox:
+        response = test_client.post(
+            "/users/password_reset_via_email",
+            data={
+                "email": "patrick@gmail.com",
+            },
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert len(outbox) == 0
+        assert (
+            b"Your email address must be confirmed before attempting a "
+            b"password reset."
+        ) in response.data
