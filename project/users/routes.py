@@ -130,7 +130,12 @@ def register():
                 )
                 db.session.add(new_user)
                 db.session.commit()
-                flash(f"Thanks for registering, {new_user.email}!")
+                flash(
+                    (
+                        f"Thanks for registering, {new_user.email}!"
+                        " Please check your email to confirm email address."
+                    ),
+                )
                 current_app.logger.info(
                     f"Registered new user: ({form.email.data})!",
                 )
@@ -191,10 +196,10 @@ def confirm_email(token):
         )
     else:
         user.email_confirmed = True
-        user.email_confirmed = datetime.now()
+        user.email_confirmed_on = datetime.now()
         db.session.add(user)
         db.session.commit()
-        flash("Thank you for confirming youer email address!", "success")
+        flash("Thank you for confirming your email address!", "success")
         current_app.logger.info(f"Email address confirmed for: {user.email}")
 
     return redirect(url_for("stocks.index"))
