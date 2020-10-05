@@ -86,3 +86,15 @@ def confirm_email_default_user(test_client, log_in_default_user):
     user.email_confirmed_on = None
     db.session.add(user)
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def afterwards_reset_default_user_password():
+    yield  # this is where the testing is happening!
+
+    # Since a test using this fixture could change the password for the default
+    # user, rerset the password back to the default password
+    user = User.query.filter_by(email="patrick@gmail.com").first()
+    user.set_password("FlaskIsAwesome123")
+    db.session.add(user)
+    db.session.commit()

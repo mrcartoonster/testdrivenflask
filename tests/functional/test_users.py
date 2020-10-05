@@ -418,3 +418,95 @@ def test_post_password_reset_via_email_page_not_confirmed(
             b"Your email address must be confirmed before attempting a "
             b"password reset."
         ) in response.data
+
+
+def test_get_password_reset_valid_token(test_client):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email/<token>' page is requested (GET)
+    with a valid token THEN check that the pages is successfully
+    returned."""
+
+    password_reset_serializer = URLSafeTimedSerializer(
+        current_app.config["SECRET_KEY"],
+    )
+    token = password_reset_serializer.dumps(
+        "patrick@gmail.com",
+        salt="password-reset-salt",
+    )
+
+    response = test_client.get(
+        "/users/password_reset_via_token/" + token,
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Password Reset:" in response.data
+    assert b"New Password" in response.data
+    assert b"Submt" in response.data
+
+
+def test_get_password_reset_invalid_token(test_client):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email/<token>' pages is requested (GET)
+    with an invalid token THEN check that an errror message is
+    displayed."""
+
+    token = "invalid_token"
+
+    response = test_client.get(
+        "/users/password_reset_via_token/" + token,
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Password Reset:" not in response.data
+    assert (
+        b"The password reset link is invalid or has expired." in response.data
+    )
+
+
+def test_post_password_reset_valid_token(
+    test_client,
+    afterwards_reset_default_user_password,
+):
+    """GIVEN a flask appliction WHEN the
+    '/users/password_reset_via_email/<token>' page is posted (POST) with
+    a valid token THEN check that the password provided is processed."""
+
+    password_reset_serializer = URLSafeTimedSerializer(
+        current_app.config["SECRET_KEY"],
+    )
+    token = password_reset_serializer.dumps(
+        "patrick@gmail.com",
+        salt="password-reset-salt",
+    )
+
+    response = test_client.post(
+        "/users/password_reset_via_token/" + token,
+        data={
+            "password": "FlaskIsStillTheBest897",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Your password has been updated!" in response.data
+
+
+def test_post_password_reset_invalid_token(test_client):
+    """GIVEN a Flask application WHEN the
+    '/users/password_reset_via_email/<token>' page is posted to (POST)
+    with an invalid token THEN check that the password provided is
+    processed."""
+
+    token = "invalid_token"
+
+    response = test_client.post(
+        "/users/password_reset_via_token" + token,
+        data={
+            "password": "FlaskIsStilGreat45678",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Your password has been updated!" not in response.data
+    assert (
+        b"The password reset link is invalid or has expired" in response.data
+    )

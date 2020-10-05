@@ -27,3 +27,11 @@ class LoginForm(FlaskForm):
     )
     remember_me = BooleanField("Remember me: ")
     submit = SubmitField("Login")
+
+
+class EmailForm(FlaskForm):
+    email = StringField(
+        "Email",
+        validators=[DataRequired(), Email(), Length(min=6, max=100)],
+    )
+    submit = SubmitField("Submit")

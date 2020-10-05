@@ -23,7 +23,7 @@ from project import db, mail
 from project.models import User
 
 from . import users_blueprint
-from .forms import LoginForm, RegistrationForm
+from .forms import EmailForm, LoginForm, RegistrationForm
 
 
 def generate_confirmation_email(user_email):
@@ -203,3 +203,43 @@ def confirm_email(token):
         current_app.logger.info(f"Email address confirmed for: {user.email}")
 
     return redirect(url_for("stocks.index"))
+
+
+@users_blueprint.route("/password_reset_via_email", methods=["GET", "POST"])
+def password_reset_via_email():
+    form = EmailForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if user is None:
+            flash("Error! Invalid email address!", "error")
+            return render_template(
+                "users/password_reset_via_email.html",
+                form=form,
+            )
+        if user.email_confirmed:
+
+            @copy_current_request_context
+            def send_email(email_message):
+                with current_app.app_context():
+                    mail.send(email_message)
+
+            message = generate_password_reset_email(form.email.data)
+            email_thread = Thread(taget=send_email, args=[message])
+            email_thread.start()
+
+            flash(
+                "Please check your email for a password reset link.",
+                "success",
+            )
+        else:
+            flash(
+                (
+                    "Your email address must be confirmed before attempting a "
+                    "password reset."
+                ),
+                "error",
+            )
+        return redirect(url_for("users.login"))
+    return render_template("users/password_reset_via_email.html", form=form)
