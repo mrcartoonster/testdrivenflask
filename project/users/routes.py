@@ -23,7 +23,7 @@ from project import db, mail
 from project.models import User
 
 from . import users_blueprint
-from .forms import EmailForm, LoginForm, RegistrationForm
+from .forms import EmailForm, LoginForm, PasswordForm, RegistrationForm
 
 
 def generate_confirmation_email(user_email):
@@ -45,6 +45,30 @@ def generate_confirmation_email(user_email):
         html=render_template(
             "users/email_confirmation.html",
             confirm_url=confirm_url,
+        ),
+        recipients=[user_email],
+    )
+
+
+def generate_password_reset_email(user_email):
+    password_reset_serializer = URLSafeTimedSerializer(
+        current_app.config["SECRET_KEY"],
+    )
+
+    password_reset_url = url_for(
+        "users.process_password_reset_token",
+        token=password_reset_serializer.dumps(
+            user_email,
+            salt="password-reset-salt",
+        ),
+        _external=True,
+    )
+
+    return Message(
+        subject="Flask Stock Portfolio App - Password Reset Requested",
+        html=render_template(
+            "users/email_password_reset.html",
+            password_reset_url=password_reset_url,
         ),
         recipients=[user_email],
     )
@@ -243,3 +267,39 @@ def password_reset_via_email():
             )
         return redirect(url_for("users.login"))
     return render_template("users/password_reset_via_email.html", form=form)
+
+
+@users_blueprint.route(
+    "/password_reset_via_token/<token>",
+    methods=["GET", "POST"],
+)
+def process_password_reset_token(token):
+    try:
+        password_reset_serializer = URLSafeTimedSerializer(
+            current_app.config["SECRET_KEY"],
+        )
+        email = password_reset_serializer.loads(
+            token,
+            salt="password-reset-salt",
+            max_age=3600,
+        )
+    except BadSignature:
+        flash("The password reset link is invalid or has expired.", "error")
+        return redirect(url_for("users.login"))
+
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=email).first()
+
+        if user is None:
+            flash("Invalid email address!", "error")
+            return redirect(url_for("users.login"))
+
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("Your password has been updated!", "success")
+        return redirect(url_for("users.login"))
+
+    return render_template("users/reset_password_with_token.html", form=form)

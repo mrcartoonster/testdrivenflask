@@ -35,3 +35,8 @@ class EmailForm(FlaskForm):
         validators=[DataRequired(), Email(), Length(min=6, max=100)],
     )
     submit = SubmitField("Submit")
+
+
+class PasswordForm(FlaskForm):
+    password = PasswordField("New Password: ", validators=[DataRequired()])
+    submit = SubmitField("Submit")

@@ -345,7 +345,7 @@ def test_get_password_reset_via_email(test_client):
     assert b"Submt" in response.data
 
 
-def test_ost_password_reset_via_email_page_valid(
+def test_lost_password_reset_via_email_page_valid(
     test_client,
     confirm_email_default_user,
 ):
@@ -501,7 +501,7 @@ def test_post_password_reset_invalid_token(test_client):
     response = test_client.post(
         "/users/password_reset_via_token" + token,
         data={
-            "password": "FlaskIsStilGreat45678",
+            "password": "FlaskIsStillGreat45678",
         },
         follow_redirects=True,
     )
