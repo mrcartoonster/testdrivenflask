@@ -250,7 +250,7 @@ def password_reset_via_email():
                     mail.send(email_message)
 
             message = generate_password_reset_email(form.email.data)
-            email_thread = Thread(taget=send_email, args=[message])
+            email_thread = Thread(target=send_email, args=[message])
             email_thread.start()
 
             flash(

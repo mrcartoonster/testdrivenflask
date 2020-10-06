@@ -43,7 +43,7 @@ def test_valid_registration(test_client):
             outbox[0].subject
             == "Flask Stock Portfolio App - Confirm Your Email Address"
         )
-        assert outbox[0].sender == "flaskstockportfolioapp@gmail.com@gmail.com"
+        assert outbox[0].sender == "flaskstockportfolioapp@gmail.com"
         assert outbox[0].recipients[0] == "patrick@email.com"
         assert "http://localhost/users/confirm/" in outbox[0].html
 
@@ -441,7 +441,7 @@ def test_get_password_reset_valid_token(test_client):
     assert response.status_code == 200
     assert b"Password Reset:" in response.data
     assert b"New Password" in response.data
-    assert b"Submt" in response.data
+    assert b"Submit" in response.data
 
 
 def test_get_password_reset_invalid_token(test_client):
@@ -499,7 +499,7 @@ def test_post_password_reset_invalid_token(test_client):
     token = "invalid_token"
 
     response = test_client.post(
-        "/users/password_reset_via_token" + token,
+        "/users/reset_password_with_token/" + token,
         data={
             "password": "FlaskIsStillGreat45678",
         },
