@@ -336,13 +336,13 @@ def test_get_password_reset_via_email(test_client):
     that the page is successfully returned."""
 
     response = test_client.get(
-        "/users/passwrod_reset_via_email",
+        "/users/password_reset_via_email",
         follow_redirects=True,
     )
     assert response.status_code == 200
     assert b"Password Reset via Email" in response.data
     assert b"Email:" in response.data
-    assert b"Submt" in response.data
+    assert b"Submit" in response.data
 
 
 def test_lost_password_reset_via_email_page_valid(
@@ -356,7 +356,7 @@ def test_lost_password_reset_via_email_page_valid(
 
     with mail.record_messages() as outbox:
         response = test_client.post(
-            "/users/passwrod_reset_via_email",
+            "/users/password_reset_via_email",
             data={
                 "email": "patrick@gmail.com",
             },
@@ -369,7 +369,7 @@ def test_lost_password_reset_via_email_page_valid(
     assert len(outbox) == 1
     assert (
         outbox[0].subject
-        == "Flask Stock Portfolio App - Passwrod Reset Requested"
+        == "Flask Stock Portfolio App - Password Reset Requested"
     )
     assert outbox[0].sender == "flaskstockportfolioapp@gmail.com"
     assert outbox[0].recipients[0] == "patrick@gmail.com"
@@ -499,7 +499,7 @@ def test_post_password_reset_invalid_token(test_client):
     token = "invalid_token"
 
     response = test_client.post(
-        "/users/reset_password_with_token/" + token,
+        "/users/password_reset_via_token/" + token,
         data={
             "password": "FlaskIsStillGreat45678",
         },

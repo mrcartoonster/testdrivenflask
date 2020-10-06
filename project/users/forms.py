@@ -31,7 +31,7 @@ class LoginForm(FlaskForm):
 
 class EmailForm(FlaskForm):
     email = StringField(
-        "Email",
+        "Email:",
         validators=[DataRequired(), Email(), Length(min=6, max=100)],
     )
     submit = SubmitField("Submit")
