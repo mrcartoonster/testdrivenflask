@@ -206,6 +206,13 @@ def test_user_profile_logged_in(test_client, log_in_default_user):
     assert b"Flask Stock Portfolio App" in response.data
     assert b"User Profile" in response.data
     assert b"Email: patrick@gmail.com" in response.data
+    assert b"Account Sttistics" in response.data
+    assert b"Joined on" in response.data
+    assert b"Email address has not been confirmed!" in response.data
+    assert b"Email address confirmed on" not in response.data
+    assert b"Account Actions" in response.data
+    assert b"Change Password" in response.data
+    assert b"Resend Email Confirmation" in response.data
 
 
 def test_user_profile_not_logged_in(test_client):
@@ -313,7 +320,7 @@ def test_confirm_email_already_confirmed(test_client):
     )
     assert response.status_code == 200
     assert b"Account already confirmed." in response.data
-    user = User.query.filter_by(email="patrick@gmai.com").first()
+    user = User.query.filter_by(email="patrick@gmail.com").first()
     assert user.email_confirmed
 
 
@@ -510,3 +517,28 @@ def test_post_password_reset_invalid_token(test_client):
     assert (
         b"The password reset link is invalid or has expired" in response.data
     )
+
+
+def test_user_profile_logged_in_email_confirmed(
+    test_client,
+    confirm_email_default_user,
+):
+    """GIVEN a Flask application WHEN the '/users/profile' page is
+    requested(GET) when the user is logged in and their email address is
+    confirmed THEN check that profile for the current user is
+    presented."""
+
+    response = test_client.get("/users/profile")
+    assert response.status_code == 200
+    assert b"Flask Stock Portfolio App" in response.data
+    assert b"User Profile" in response.data
+    assert b"Email: patrick@gmail.com" in response.data
+    assert b"Account Statistics" in response.data
+    assert b"Joined on" in response.data
+    assert b"Email address has not been confirmed!" not in response.data
+    assert (
+        b"Email address confirmed on Wednesday, July 08, 2020" in response.data
+    )
+    assert b"Account Actions" in response.data
+    assert b"Change Password" in response.data
+    assert b"Resend Email Confirmation" not in response.data
