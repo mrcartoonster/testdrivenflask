@@ -598,4 +598,32 @@ def test_post_change_password_logged_in_invalid_current_password(
     '/users/change_password' page is posted to (POST) with the incorrect
     current password THEN check an error message is returned to the
     user."""
-    pass
+    response = test_client.post(
+        "/users/change_password",
+        data={
+            "current_password": "FlaskIsNotAwesome123",
+            "new_password": "FlaskIsStillAwesome",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    print(response.data)
+    assert b"Pssword has been updated!" not in response.data
+    assert b"ERROR! Incorrect user credentials!" in response.data
+
+
+def test_post_change_password_not_logged_in(test_client):
+    """GIVEN a Flask application with the user not logged in WHEN the
+    '/users/change_password' page is posted to (POST) THEN check an
+    error message is returned to the user."""
+    response = test_client.post(
+        "/users/change_password",
+        data={
+            "current_password": "FlaskIsAwesome123",
+            "new_password": "FlaskIsStillAwesome456",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Please log in to access this page." in response.data
+    assert b"Password has been updated!" not in response.data

@@ -23,7 +23,13 @@ from project import db, mail
 from project.models import User
 
 from . import users_blueprint
-from .forms import EmailForm, LoginForm, PasswordForm, RegistrationForm
+from .forms import (
+    ChangePasswordForm,
+    EmailForm,
+    LoginForm,
+    PasswordForm,
+    RegistrationForm,
+)
 
 
 def generate_confirmation_email(user_email):
@@ -307,7 +313,25 @@ def process_password_reset_token(token):
 
 @users_blueprint.route("/change_password", methods=["GET", "POST"])
 def change_password():
-    return "<h1>Page Is Under Construction</h1>"
+    form = ChangePasswordForm()
+
+    if form.validate_on_submit():
+        if current_user.is_password_correct(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.add(current_user)
+            db.session.commit()
+            flash("Password has been update!", "success")
+            current_app.logger.info(
+                f"Password updated for user: {current_user.email}",
+            )
+            return redirect(url_for("users.user_profile"))
+        else:
+            flash("ERROR! Incorrect user credentials!")
+            current_app.logger.info(
+                f"Incorrect password change for user: {current_user.email}",
+            )
+        return redirect(url_for("users.user_profile"))
+    return render_template("users/change_password.html", form=form)
 
 
 @users_blueprint.route("/resend_email_confirmation")
