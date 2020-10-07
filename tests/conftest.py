@@ -31,7 +31,7 @@ def test_client():
 
 
 @pytest.fixture(scope="module")
-def new_stock():
+def new_stock(test_client_with_app_context):
     """Base Stocks to add."""
     stock = Stock("AAPL", "16", "406.78")
     return stock
@@ -98,3 +98,14 @@ def afterwards_reset_default_user_password():
     user.set_password("FlaskIsAwesome123")
     db.session.add(user)
     db.session.commit()
+
+
+@pytest.fixture(scope="module")
+def test_client_with_app_context():
+    flask_app = create_app()
+    flask_app.config.from_object("config.TestingConfig")
+    flask_app.extensions["mail"].suppress = True
+
+    with flask_app.test_client() as testing_client:
+        with flask_app.app_context():
+            yield testing_client
