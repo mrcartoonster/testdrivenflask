@@ -31,7 +31,7 @@ def test_client():
 
 
 @pytest.fixture(scope="module")
-def new_stock():
+def new_stock(test_client_with_app_context):
     """Base Stocks to add."""
     stock = Stock("AAPL", "16", "406.78")
     return stock
@@ -86,3 +86,27 @@ def confirm_email_default_user(test_client, log_in_default_user):
     user.email_confirmed_on = None
     db.session.add(user)
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def afterwards_reset_default_user_password():
+    yield  # this is where the testing is happening!
+
+    # Since a test using this fixture could change the password for the default
+    # user, rerset the password back to the default password
+    user = User.query.filter_by(email="patrick@gmail.com").first()
+    user.set_password("FlaskIsAwesome123")
+    db.session.add(user)
+    db.session.commit()
+
+
+@pytest.fixture(scope="module")
+def test_client_with_app_context():
+    """Haven't used this yet"""
+    flask_app = create_app()
+    flask_app.config.from_object("config.TestingConfig")
+    flask_app.extensions["mail"].suppress = True
+
+    with flask_app.test_client() as testing_client:
+        with flask_app.app_context():
+            yield testing_client
