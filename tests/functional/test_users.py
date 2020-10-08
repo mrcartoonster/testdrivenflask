@@ -643,9 +643,9 @@ def test_get_resend_email_confirmation_logged_in(
         )
         assert response.status_code == 200
         assert (
-            b"Email sent to confirm your email address. Please check your email!"
-            in response.data
-        )
+            b"Email sent to confirm your email address. "
+            b"Please check your email!"
+        ) in response.data
         assert len(outbox) == 1
         assert (
             outbox[0].subject
@@ -668,8 +668,8 @@ def test_get_resend_email_confirmation_not_logged_in(test_client):
         )
         assert response.status_code == 200
         assert (
-            b"Email sent to confirm your email address. Please check your email!"
-            not in response.data
-        )
+            b"Email sent to confirm your email address. "
+            b"Please check your email!"
+        ) not in response.data
         assert len(outbox) == 0
         assert b"Please log in to access this page." in response.data
