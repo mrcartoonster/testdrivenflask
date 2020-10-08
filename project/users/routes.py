@@ -352,6 +352,9 @@ def resend_email_confirmation():
         "success",
     )
     current_app.logger.info(
-        f"Email re-sent to confirm email address for user: {current_user.email}",
+        (
+            "Email re-sent to confirm email address for user: "
+            f"{current_user.email}"
+        ),
     )
     return redirect(url_for("users.user_profile"))
