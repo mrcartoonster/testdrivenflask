@@ -23,7 +23,13 @@ from project import db, mail
 from project.models import User
 
 from . import users_blueprint
-from .forms import LoginForm, RegistrationForm
+from .forms import (
+    ChangePasswordForm,
+    EmailForm,
+    LoginForm,
+    PasswordForm,
+    RegistrationForm,
+)
 
 
 def generate_confirmation_email(user_email):
@@ -45,6 +51,30 @@ def generate_confirmation_email(user_email):
         html=render_template(
             "users/email_confirmation.html",
             confirm_url=confirm_url,
+        ),
+        recipients=[user_email],
+    )
+
+
+def generate_password_reset_email(user_email):
+    password_reset_serializer = URLSafeTimedSerializer(
+        current_app.config["SECRET_KEY"],
+    )
+
+    password_reset_url = url_for(
+        "users.process_password_reset_token",
+        token=password_reset_serializer.dumps(
+            user_email,
+            salt="password-reset-salt",
+        ),
+        _external=True,
+    )
+
+    return Message(
+        subject="Flask Stock Portfolio App - Password Reset Requested",
+        html=render_template(
+            "users/email_password_reset.html",
+            password_reset_url=password_reset_url,
         ),
         recipients=[user_email],
     )
@@ -203,3 +233,128 @@ def confirm_email(token):
         current_app.logger.info(f"Email address confirmed for: {user.email}")
 
     return redirect(url_for("stocks.index"))
+
+
+@users_blueprint.route("/password_reset_via_email", methods=["GET", "POST"])
+def password_reset_via_email():
+    form = EmailForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if user is None:
+            flash("Error! Invalid email address!", "error")
+            return render_template(
+                "users/password_reset_via_email.html",
+                form=form,
+            )
+        if user.email_confirmed:
+
+            @copy_current_request_context
+            def send_email(email_message):
+                with current_app.app_context():
+                    mail.send(email_message)
+
+            message = generate_password_reset_email(form.email.data)
+            email_thread = Thread(target=send_email, args=[message])
+            email_thread.start()
+
+            flash(
+                "Please check your email for a password reset link.",
+                "success",
+            )
+        else:
+            flash(
+                (
+                    "Your email address must be confirmed before attempting a "
+                    "password reset."
+                ),
+                "error",
+            )
+        return redirect(url_for("users.login"))
+    return render_template("users/password_reset_via_email.html", form=form)
+
+
+@users_blueprint.route(
+    "/password_reset_via_token/<token>",
+    methods=["GET", "POST"],
+)
+def process_password_reset_token(token):
+    try:
+        password_reset_serializer = URLSafeTimedSerializer(
+            current_app.config["SECRET_KEY"],
+        )
+        email = password_reset_serializer.loads(
+            token,
+            salt="password-reset-salt",
+            max_age=3600,
+        )
+    except BadSignature:
+        flash("The password reset link is invalid or has expired.", "error")
+        return redirect(url_for("users.login"))
+
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=email).first()
+
+        if user is None:
+            flash("Invalid email address!", "error")
+            return redirect(url_for("users.login"))
+
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("Your password has been updated!", "success")
+        return redirect(url_for("users.login"))
+
+    return render_template("users/reset_password_with_token.html", form=form)
+
+
+@users_blueprint.route("/change_password", methods=["GET", "POST"])
+def change_password():
+    form = ChangePasswordForm()
+
+    if form.validate_on_submit():
+        if current_user.is_password_correct(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.add(current_user)
+            db.session.commit()
+            flash("Password has been update!", "success")
+            current_app.logger.info(
+                f"Password updated for user: {current_user.email}",
+            )
+            return redirect(url_for("users.user_profile"))
+        else:
+            flash("ERROR! Incorrect user credentials!")
+            current_app.logger.info(
+                f"Incorrect password change for user: {current_user.email}",
+            )
+        return redirect(url_for("users.user_profile"))
+    return render_template("users/change_password.html", form=form)
+
+
+@users_blueprint.route("/resend_email_confirmation")
+@login_required
+def resend_email_confirmation():
+    @copy_current_request_context
+    def send_email(email_message):
+        with current_app.app_context():
+            mail.send(email_message)
+
+    # Send an email to confirm the user's email address
+    message = generate_confirmation_email(current_user.email)
+    email_thread = Thread(target=send_email, args=[message])
+    email_thread.start()
+
+    flash(
+        "Email sent to confirm your email address.  Please check your email!",
+        "success",
+    )
+    current_app.logger.info(
+        (
+            "Email re-sent to confirm email address for user: "
+            f"{current_user.email}"
+        ),
+    )
+    return redirect(url_for("users.user_profile"))
