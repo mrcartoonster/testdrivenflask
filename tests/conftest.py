@@ -33,7 +33,7 @@ def test_client():
 @pytest.fixture(scope="module")
 def new_stock(test_client_with_app_context):
     """Base Stocks to add."""
-    stock = Stock("AAPL", "16", "406.78")
+    stock = Stock("AAPL", "16", "406.78", 17, datetime(2020, 7, 18))
     return stock
 
 
