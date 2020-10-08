@@ -102,6 +102,7 @@ def afterwards_reset_default_user_password():
 
 @pytest.fixture(scope="module")
 def test_client_with_app_context():
+    """Haven't used this yet"""
     flask_app = create_app()
     flask_app.config.from_object("config.TestingConfig")
     flask_app.extensions["mail"].suppress = True
