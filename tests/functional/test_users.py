@@ -198,13 +198,13 @@ def test_invalid_logout_not_logged_in(test_client):
 
 
 def test_user_profile_logged_in(
-    test_client_with_app_context,
+    test_client,
     log_in_default_user,
 ):
     """GIVEN a Flask application WHEN the '/users/profile' page is
     requested (GET) when the user is logged in THEN check that the
     profile for the current user is displayed."""
-    response = test_client_with_app_context.get("/users/profile")
+    response = test_client.get("/users/profile")
     assert response.status_code == 200
     assert b"Flask Stock Portfolio App" in response.data
     assert b"User Profile" in response.data

@@ -7,9 +7,9 @@ from project import create_app, db
 from project.models import Stock, User
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def new_stock():
-    stock = Stock("AAPL", "16", "406.78")
+    stock = Stock("AAPL", "16", "406.78", 17, datetime(2020, 7, 18))
     return stock
 
 
@@ -21,10 +21,14 @@ def new_user(test_client_with_app_context):
 
 @pytest.fixture(scope="module")
 def register_default_user(test_client):
-    user = User("patrick@gmail.com", "FlaskIsAwesome123")
-    db.session.add(user)
-    db.session.commit()
-    return user
+    """Registers the default user using the '/users/register' route."""
+    test_client.post(
+        "/users/register",
+        data={
+            "email": "patrick@gmail.com",
+            "password": "FlaskIsAwesome123",
+        },
+    )
 
 
 @pytest.fixture(scope="function")
@@ -36,10 +40,9 @@ def log_in_default_user(test_client, register_default_user):
             "email": "patrick@gmail.com",
             "password": "FlaskIsAwesome123",
         },
-        follow_redirects=True,
     )
 
-    yield register_default_user  # this is where the testing happens!
+    yield  # this is where the testing happens!
 
     # Log out the user
     test_client.get("/users/logout", follow_redirects=True)
@@ -50,7 +53,7 @@ def confirm_email_default_user(test_client, log_in_default_user):
     # Mark the user as having their email address confirmed
     user = User.query.filter_by(email="patrick@gmail.com").first()
     user.email_confirmed = True
-    user.email_confirmed_on = datetime(2020, 7, 8)
+    user.email_confirmed_on = datetime.datetime(2020, 7, 8)
     db.session.add(user)
     db.session.commit()
 

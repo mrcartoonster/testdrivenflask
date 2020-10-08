@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 import click
 from flask import (
     current_app,
@@ -8,6 +10,7 @@ from flask import (
     request,
     url_for,
 )
+from flask_login import current_user, login_required
 
 from project import db
 from project.models import Stock
@@ -57,6 +60,7 @@ def index():
 
 
 @stocks_blueprint.route("/add_stock", methods=["GET", "POST"])
+@login_required
 def add_stock():
     """View that for /add_stocs that will capture stock information from
     form and place it into our database."""
@@ -66,6 +70,8 @@ def add_stock():
             request.form["stock_symbol"],
             request.form["number_of_shares"],
             request.form["purchase_price"],
+            current_user.id,
+            datetime.fromisoformat(request.form["purchase_date"]),
         )
         db.session.add(new_stock)
         db.session.commit()
