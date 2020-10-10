@@ -84,7 +84,7 @@ class User(db.Model):
     email_confirmation_sent_on = db.Column(db.DateTime)
     email_confirmed = db.Column(db.Boolean, default=False)
     email_confirmed_on = db.Column(db.DateTime)
-    stocks = db.relationship("Stock", backref="users", lazy="dynamic")
+    stocks = db.relationship("Stock", backref="user", lazy="dynamic")
 
     def __init__(
         self,

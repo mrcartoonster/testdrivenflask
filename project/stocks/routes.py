@@ -89,6 +89,9 @@ def add_stock():
 
 
 @stocks_blueprint.route("/stocks")
+@login_required
 def list_stocks():
-    stocks = Stock.query.order_by(Stock.id).all()
+    stocks = (
+        Stock.query.order_by(Stock.id).filter_by(user_id=current_user.id).all()
+    )
     return render_template("stocks/stocks.html", stocks=stocks)

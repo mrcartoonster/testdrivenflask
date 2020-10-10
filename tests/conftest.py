@@ -113,3 +113,50 @@ def afterwards_reset_default_user_password():
     user.set_password("FlaskIsAwesome123")
     db.session.add(user)
     db.session.commit()
+
+
+stock = {
+    "stock_symbol": "AAPL",
+    "number_of_shares": "23",
+    "purchase_price": "432.17",
+    "purchase_date": "2020-07-24",
+}
+
+
+@pytest.fixture(params=stock)
+def stocks(request):
+    """Sample Stock for testing."""
+    return request.param
+
+
+@pytest.fixture(scope="function")
+def add_stocks_for_default_user(test_client, log_in_default_user):
+    # Add three stocks for the default user
+    test_client.post(
+        "/add_stock",
+        data={
+            "stock_symbol": "SAM",
+            "number_of_shares": "27",
+            "purchase_price": "301.23",
+            "purchase_date": "2020-07-01",
+        },
+    )
+    test_client.post(
+        "/add_stock",
+        data={
+            "stock_symbol": "COST",
+            "number_of_shares": "76",
+            "purchase_price": "14.67",
+            "purchase_date": "2019-05-26",
+        },
+    )
+    test_client.post(
+        "/add_stock",
+        data={
+            "stock_symbol": "TWTR",
+            "number_of_shares": "146",
+            "purchase_price": "34.56",
+            "purchase_date": "2020-02-03",
+        },
+    )
+    return
