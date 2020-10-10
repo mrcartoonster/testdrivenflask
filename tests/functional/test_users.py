@@ -197,7 +197,10 @@ def test_invalid_logout_not_logged_in(test_client):
     assert b"Please log in to access this page." in response.data
 
 
-def test_user_profile_logged_in(test_client, log_in_default_user):
+def test_user_profile_logged_in(
+    test_client,
+    log_in_default_user,
+):
     """GIVEN a Flask application WHEN the '/users/profile' page is
     requested (GET) when the user is logged in THEN check that the
     profile for the current user is displayed."""

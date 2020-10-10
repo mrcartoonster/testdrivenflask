@@ -1,29 +1,30 @@
 {% extends "base.html" %}
 
 {% block styling %}
-  <link rel="stylesheet" href="{{ url_for('static',
-             filename='css/stocks_style.css') }}">
-{% endblock styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stocks_style.css') }}">
+{% endblock %}
 
 {% block content %}
-  <h2>List of Stocks:</h2>
-  <br>
+<h2>List of Stocks:</h2>
+<br>
 
+<table id="stock-table">
   <!-- Table Header Row -->
-  <table>
-    <tr>
-      <th>Stock Symbol</th>
-      <th>Number of Shares</th>
-      <th>Share Price</th>
-    </tr>
+  <tr>
+    <th>Stock Symbol</th>
+    <th>Number of Shares</th>
+    <th>Share Price</th>
+    <th>Purchase Date</th>   <!-- NEW! -->
+  </tr>
 
-    <!-- Table Elements (Rows) -->
-    {% for stock in stocks %}
-      <tr>
-        <td>{{ stock.stock_symbol }}</td>
-        <td>{{ stock.number_of_shares }}</td>
-        <td>${{ stock.purchase_price / 100 }}</td>
-      </tr>
-    {% endfor %}
-  </table>
+  <!-- Table Elements (Rows) -->
+  {% for stock in stocks %}
+    <tr>
+      <td>{{ stock.stock_symbol }}</td>
+      <td>{{ stock.number_of_shares }}</td>
+      <td>${{ stock.purchase_price / 100 }}</td>
+      <td>{{ stock.purchase_date.strftime("%Y-%m-%d") }}</td>   <!-- NEW! -->
+    </tr>
+  {% endfor %}
+</table>
 {% endblock %}

@@ -1,23 +1,26 @@
 {% extends "base.html" %}
 
 {% block styling %}
-  <link rel="stylesheet" href="{{ url_for('static',
-             filename='add_stock_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/add_stock_style.css') }}">
 {% endblock %}
+
 {% block content %}
-  <h2>Add a Stock:</h2>
-  <form method="post">
-    <input type="hidden" name="csrf_token" value={{ csrf_token() }}>
-    <label for="stockSymbol">Stock Symbol (required):</label>
-    <input type="text" id="stockSymbol" name="stock_symbol" required
-                                        pattern="[A-Z]{1,5}"/>
-    <br>
-    <label for="numberOfShares">Number of Shares (required):</label>
-    <input type="text" id="numberOfShares" name="number_of_shares" />
-    <br>
-    <label for="purhasePrice">Purchase Price (required) ($):</label>
-    <input type="text" id="purchasePrice" name="purchase_price">
-    <br>
-    <input type="submit">
-  </form>
+<h2 class="add-stock-heading">Add a Stock:</h2>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+  <label for="stockSymbol">Stock Symbol (required):</label>
+  <input type="text" id="stockSymbol" name="stock_symbol" required pattern="[A-Z]{1,5}" />
+  <br>
+  <label for="numberOfShares">Number of Shares (required):</label>
+  <input type="text" id="numberOfShares" name="number_of_shares" required />
+  <br>
+  <label for="purchasePrice">Purchase Price (required) ($):</label>
+  <input type="text" id="purchasePrice" name="purchase_price" required />
+  <br>
+  <label for="purchaseDate">Purchase Date (required):</label>  <!-- NEW! -->
+  <input type="date" id="purchaseDate" name="purchase_date"  placeholder="YYYY-MM-DD" required>  <!-- NEW! -->
+  <br>
+  <input type="submit">
+</form>
 {% endblock %}
