@@ -1,4 +1,51 @@
 # -*- coding: utf-8 -*-
+import requests
+
+
+class MockSuccessResponse(object):
+    def __init__(self, url):
+        self.status_code = 200
+        self.url = url
+        self.headers = {"blaa": "1234"}
+
+    def json(self):
+        return {
+            "Meta Data": {
+                "2. Symbol": "MSFT",
+                "3. Last refreshed": "2020-03-24",
+            },
+            "Time Series (Daily)": {
+                "2020-03-24": {
+                    "4. close": "148.3400",
+                },
+                "2020-03-23": {
+                    "4. close": "135.9800",
+                },
+            },
+        }
+
+
+def test_monkeypatch_get_success(monkeypatch):
+    """GIVEN a Flask application and monkeypatched version of
+    requests.get() WHEN the HTTP response is set to successful THEN
+    check the HTTP response."""
+
+    def mock_get(url):
+        return MockSuccessResponse(url)
+
+    url = (
+        "https://www.aphavantage.co/"
+        "query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
+    )
+    monkeypatch.setattr(requests, "get", mock_get)
+    r = requests.get(url)
+    assert r.status_code == 200
+    assert r.url == url
+    assert "MSFT" in r.json()["Meta Data"]["2. Symbol"]
+    assert "2020-03-24" in r.json()["Meta Data"]["3. Last Refreshed"]
+    assert (
+        "148.34" in r.json()["Time Series (Daily)"]["2020-03-24"]["4. close"]
+    )
 
 
 def test_get_add_stock_page(test_client, log_in_default_user):
