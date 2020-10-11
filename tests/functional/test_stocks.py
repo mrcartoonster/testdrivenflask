@@ -12,7 +12,7 @@ class MockSuccessResponse(object):
         return {
             "Meta Data": {
                 "2. Symbol": "MSFT",
-                "3. Last refreshed": "2020-03-24",
+                "3. Last Refreshed": "2020-03-24",
             },
             "Time Series (Daily)": {
                 "2020-03-24": {
@@ -23,6 +23,16 @@ class MockSuccessResponse(object):
                 },
             },
         }
+
+
+class MockFailedResponse(object):
+    def __init__(self, url):
+        self.status_code = 404
+        self.url = url
+        self.headers = {"blaa": "1234"}
+
+    def json(self):
+        return {"error": "bad"}
 
 
 def test_monkeypatch_get_success(monkeypatch):
@@ -46,6 +56,26 @@ def test_monkeypatch_get_success(monkeypatch):
     assert (
         "148.34" in r.json()["Time Series (Daily)"]["2020-03-24"]["4. close"]
     )
+
+
+def test_monkeypatch_get_failure(monkeypatch):
+    """GIVEN a flask application and a monkeypatched version of
+    request.get() WHEN the HTTP response is set to failed THEN check the
+    HTTP response."""
+
+    def mock_get(url):
+        return MockFailedResponse(url)
+
+    url = (
+        "https://www.alphavantage.co/query?"
+        "function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
+    )
+    monkeypatch.setattr(requests, "get", mock_get)
+    r = requests.get(url)
+    print(r.json())
+    assert r.status_code == 404
+    assert r.url == url
+    assert "bad" in r.json()["error"]
 
 
 def test_get_add_stock_page(test_client, log_in_default_user):
