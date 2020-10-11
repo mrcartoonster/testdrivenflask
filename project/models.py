@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+import requests
 from flask import current_app
 
 from project import bcrypt, db
@@ -14,6 +15,11 @@ class Stock(db.Model):
         stock symbol (type: string)
         number of shares (type: integer)
         purchase price (type: integer)
+        primary kef of User that owns the stock (type: integer)
+        purchase date (type: datetime)
+        current price (type: integer)
+        date when current price was retrieved from the Alpha Vantage API(date)
+        position value = current price * number of shares (type: integer)
 
     Note: Due to a limitation in the data types supported by SQLite, the
     purchae price is stored as in integer:
@@ -34,6 +40,9 @@ class Stock(db.Model):
     purchase_price = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     purchase_date = db.Column(db.DateTime)
+    curent_price = db.Column(db.Integer)
+    current_price_date = db.Column(db.DateTime)
+    posistion_value = db.Column(db.Integer)
 
     def __init__(
         self,
@@ -48,11 +57,64 @@ class Stock(db.Model):
         self.purchase_price = int(float(purchase_price) * 100)
         self.user_id = user_id
         self.purchase_date = purchase_date
+        self.current_price_date = 0
+        self.current_price_date = None
+        self.posistion_value = 0
 
     def __repr__(self):
         return (
             f"{self.stock_symbol} - {self.number_of_shares} "
             f"shares purchased at ${self.purchase_price / 100}"
+        )
+
+    def create_alpha_vantage_get_url_daily_compact(self):
+        return "https://www.alphavantage.co/query?function={}&symbol={}&outputsize={}&apikey={}".format(
+            "TIME_SERIES_DAILY_ADJUSTED",
+            self.stock_symbol,
+            "compact",
+            current_app.config["ALPHA_VANTAGE_API_KEY"],
+        )
+
+    def get_stock_data(self):
+        if (
+            self.current_price_date is None
+            or self.current_price_date.date() != datetime.now().date()
+        ):
+            url = self.create_alpha_vantage_get_url_daily_compact()
+
+            try:
+                r = requests.get(url)
+            except requests.exceptions.ConnectionError:
+                current_app.logger.error(
+                    f"Error! Network problem preventing retrieving the stock data ({self.stock_symbol})!",
+                )
+
+        if r.status_code != 200:
+            current_app.logger.warning(
+                f"Error! received unexpected status code ({ r.status_code }) "
+                f"when retrieving stock data ({self.stock_symbold})",
+            )
+            return
+
+        daily_data = r.json()
+
+        if "Time Series (Daily)" not in daily_data:
+            current_app.logger.warning(
+                f"Could not find Time Seiries (Daily) key when retreiving "
+                f"the stock data ({self.stock_symbol})",
+            )
+            return
+        for element in daily_data["Time Series (Daily)"]:
+            current_price = float(
+                daily_data["Time Series (Daily)"]["4. close"],
+            )
+            self.current_price = int(float(current_price) * 100)
+            self.current_price_date = datetime.now()
+            self.posistion_value = self.current_price * self.number_of_shares
+            break
+        current_app.logger.debug(
+            f"retrieved current price {self.currrent_price / 100} "
+            f"for the stock data ({self.stock_symbol}!)",
         )
 
 
