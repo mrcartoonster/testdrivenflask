@@ -37,11 +37,9 @@ class MockApiRateLimitExceededResponse(object):
 
     def json(self):
         return {
-            "Note": (
-                "Thank you for using Alpha Vantage! Our "
-                "standard API call frequency is "
-                "5 calls per minute and 500 calls per day."
-            ),
+            "Note": "Thank you for using Alpha Vantage! "
+            + "Our standard API call frequency is "
+            + +"5 calls per minute and 500 calls per day.",
         }
 
 
@@ -100,7 +98,7 @@ def confirm_email_default_user(test_client, log_in_default_user):
     # Mark the user as having their email address confirmed
     user = User.query.filter_by(email="patrick@gmail.com").first()
     user.email_confirmed = True
-    user.email_confirmed_on = datetime.datetime(2020, 7, 8)
+    user.email_confirmed_on = datetime(2020, 7, 8)
     db.session.add(user)
     db.session.commit()
 

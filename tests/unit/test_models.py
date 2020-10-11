@@ -45,7 +45,7 @@ def test_get_stock_data_success(
     requests.get() WHEN the HTTP response is set to successful THEN
     check that the stock data is updated."""
     new_stock.get_stock_data()
-    assert new_stock.symbol == "AAPL"
+    assert new_stock.stock_symbol == "AAPL"
     assert new_stock.number_of_shares == 16
     assert new_stock.purchase_price == 40678
     assert new_stock.purchase_date.date() == datetime(2020, 7, 18).date()
@@ -67,8 +67,8 @@ def test_get_stock_data_api_rate_limit_exceeded(
     assert new_stock.stock_symbol == "AAPL"
     assert new_stock.number_of_shares == 16
     assert new_stock.purchase_price == 40678
-    assert new_stock.purchase_date.date() == datetime(2020, 7, 10).date()
-    assert new_stock.currrent_price == 0
+    assert new_stock.purchase_date.date() == datetime(2020, 7, 18).date()
+    assert new_stock.current_price == 0
     assert new_stock.current_price_date is None
     assert new_stock.position_value == 0
 
@@ -83,7 +83,7 @@ def test_get_stock_data_failure(
     assert new_stock.number_of_shares == 16
     assert new_stock.purchase_price == 40678
     assert new_stock.purchase_date.date() == datetime(2020, 7, 18).date()
-    assert new_stock.currrent_price == 0
+    assert new_stock.current_price == 0
     assert new_stock.current_price_date is None
     assert new_stock.position_value == 0
 
@@ -98,7 +98,7 @@ def test_get_stock_data_success_two_calls(
     check that the stock data is updated."""
     assert new_stock.stock_symbol == "AAPL"
     assert new_stock.current_price == 0
-    assert new_stock.currrent_price_date is None
+    assert new_stock.current_price_date is None
     assert new_stock.position_value == 0
     new_stock.get_stock_data()
     assert new_stock.current_price == 14834
@@ -106,5 +106,5 @@ def test_get_stock_data_success_two_calls(
     assert new_stock.position_value == (14834 * 16)
     new_stock.get_stock_data()
     assert new_stock.current_price == 14834
-    assert new_stock.curent_price_date.date() == datetime.now().date()
-    assert new_stock.posistion_value == (14834 * 16)
+    assert new_stock.current_price_date.date() == datetime.now().date()
+    assert new_stock.position_value == (14834 * 16)
