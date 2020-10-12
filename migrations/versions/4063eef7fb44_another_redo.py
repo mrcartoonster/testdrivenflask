@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-rebuilding again.
+another redo.
 
-Revision ID: b91e295482dd
+Revision ID: 4063eef7fb44
 Revises:
-Create Date: 2020-10-08 12:29:57.418231
+Create Date: 2020-10-12 09:40:39.908252
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "b91e295482dd"
+revision = "4063eef7fb44"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,6 +39,9 @@ def upgrade():
         sa.Column("purchase_price", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("purchase_date", sa.DateTime(), nullable=True),
+        sa.Column("current_price", sa.Integer(), nullable=True),
+        sa.Column("current_price_date", sa.DateTime(), nullable=True),
+        sa.Column("position_value", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),
     )

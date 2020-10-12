@@ -101,7 +101,11 @@ def test_get_add_stock_page_not_logged_in(test_client):
     assert b"Please log in to access this page." in response.data
 
 
-def test_post_add_stock_page(test_client, log_in_default_user):
+def test_post_add_stock_page(
+    test_client,
+    log_in_default_user,
+    mock_requests_get_success,
+):
     """GIVEn a Flask application WHEN the '/add_stock' page is posted to
     (POST) when the user is logged in THEN check that a message is
     desplayed to the user htat the stock was added."""
@@ -146,7 +150,11 @@ def test_post_add_stock_page_not_logged_in(test_client):
     assert b"Please log in to access this page." in response.data
 
 
-def test_get_stock_list_logged(test_client, add_stocks_for_default_user):
+def test_get_stock_list_logged(
+    test_client,
+    add_stocks_for_default_user,
+    mock_requests_get_success,
+):
     """GIVEN a Flask application WHEN the '/stocks' page is requested
     (GET) when the user is logged in THEN check the response is
     valid."""
@@ -155,6 +163,9 @@ def test_get_stock_list_logged(test_client, add_stocks_for_default_user):
         b"Number of Shares",
         b"Share Price",
         b"Purchase Date",
+        b"Current Share Price",
+        b"Stock Position Value",
+        b"TOTAL VALUE",
     ]
     data = [
         b"SAM",
