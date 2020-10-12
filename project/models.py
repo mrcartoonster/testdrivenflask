@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+import requests
 from flask import current_app
 
 from project import bcrypt, db
@@ -8,21 +9,25 @@ from project import bcrypt, db
 
 class Stock(db.Model):
     """
-    Class the represents a purchased stock in a portolio.
+    Class that represents a purchased stock in a portfolio.
 
     The following attributes of a stock are stored in this table:
         stock symbol (type: string)
         number of shares (type: integer)
         purchase price (type: integer)
+        primary key of User that owns the stock (type: integer)
+        purchase date (type: datetime)
+        current price (type: integer)
+        date when current price was retrieved from the
+        Alpha Vantage API (type: datetime)
+        position value = current price * number of shares (type: integer)
 
     Note: Due to a limitation in the data types supported by SQLite, the
-    purchae price is stored as in integer:
-        $24.10 -> 2410
-        $100.00 -> 10000
-        $87.65 -> 8765
-
-    Note: This is why when I make my own Flask apps with dbs, I'll
-    be using Postgres. Postgres as a money type!
+          purchase price, current price, and position value are stored as
+          integers:
+              $24.10 -> 2410
+              $100.00 -> 10000
+              $87.65 -> 8765
 
     """
 
@@ -34,6 +39,9 @@ class Stock(db.Model):
     purchase_price = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     purchase_date = db.Column(db.DateTime)
+    current_price = db.Column(db.Integer)
+    current_price_date = db.Column(db.DateTime)
+    position_value = db.Column(db.Integer)
 
     def __init__(
         self,
@@ -48,11 +56,92 @@ class Stock(db.Model):
         self.purchase_price = int(float(purchase_price) * 100)
         self.user_id = user_id
         self.purchase_date = purchase_date
+        self.current_price = 0
+        self.current_price_date = None
+        self.position_value = 0
 
     def __repr__(self):
         return (
             f"{self.stock_symbol} - {self.number_of_shares} "
             f"shares purchased at ${self.purchase_price / 100}"
+        )
+
+    def create_alpha_vantage_get_url_daily_compact(self):
+        return (
+            "https://www.alphavantage.co/query?function={}&symbol={}"
+            "&outputsize={}&apikey={}".format(
+                "TIME_SERIES_DAILY_ADJUSTED",
+                self.stock_symbol,
+                "compact",
+                current_app.config["ALPHA_VANTAGE_API_KEY"],
+            )
+        )
+
+    def get_stock_data(self):
+        if (
+            self.current_price_date is None
+            or self.current_price_date.date() != datetime.now().date()
+        ):
+            url = self.create_alpha_vantage_get_url_daily_compact()
+
+            try:
+                r = requests.get(url)
+            except requests.exceptions.ConnectionError:
+                current_app.logger.error(
+                    (
+                        "Error! Network problem preventing retrieving the "
+                        f"stock data ({ self.stock_symbol })!"
+                    ),
+                )
+
+            # Status code returned from Alpha Vantage needs to be 200 (OK)
+            if r.status_code != 200:
+                current_app.logger.warning(
+                    (
+                        "Error! Received unexpected status code "
+                        f"({ r.status_code }) "
+                        f"when retrieving stock data ({ self.stock_symbol })!"
+                    ),
+                )
+                return
+
+            daily_data = r.json()
+
+            # The key of 'Time Series (Daily)' needs to be present
+            # Typically, this key will not be present if the API
+            if "Time Series (Daily)" not in daily_data:
+                current_app.logger.warning(
+                    f"Could not find Time Series (Daily) key when retrieving "
+                    f"the stock data ({ self.stock_symbol })!",
+                )
+                return
+
+            for element in daily_data["Time Series (Daily)"]:
+                current_price = float(
+                    daily_data["Time Series (Daily)"][element]["4. close"],
+                )
+                self.current_price = int(float(current_price) * 100)
+                self.current_price_date = datetime.now()
+                self.position_value = (
+                    self.current_price * self.number_of_shares
+                )
+                break
+            current_app.logger.debug(
+                f"Retrieved current price {self.current_price / 100} "
+                f"for the stock data ({ self.stock_symbol })!",
+            )
+
+    def get_stock_position_value(self) -> float:
+        return float(self.position_value / 100)
+
+    def create_alpha_vantage_get_url_weekly(self):
+        return (
+            "https://www.alphavantage.co/query?"
+            "function={}&symbol={}&apikey={}".format(
+                "TIME_SERIES_WEEKLY_ADJUSTED",
+                self.stock_symbol,
+                current_app.config["ALPHA_VANTAGE_API_KEY"],
+            )
         )
 
 
@@ -71,7 +160,7 @@ class User(db.Model):
         * email_confirmed_on - date & time that the user's email address was
             confirmed
 
-    REMEMBER: Never store the plaintext password in a database!
+    REMEMBER: Never store the plaintext password in a db!
 
     """
 

@@ -26,6 +26,7 @@ class Config:
     MAIL_USERNAME = os.getenv("MAIL_USERNAME", default="")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", default="")
     MAIL_DEFAULT_SENDER = "flaskstockportfolioapp@gmail.com"
+    ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY", default="")
 
 
 class ProductionConfig(Config):
