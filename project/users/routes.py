@@ -349,7 +349,7 @@ def resend_email_confirmation():
     email_thread.start()
 
     flash(
-        "Email sent to confirm your email address.  Please check your email!",
+        "Email sent to confirm your email address. Please check your email!",
         "success",
     )
     current_app.logger.info(
