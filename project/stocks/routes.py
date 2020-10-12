@@ -106,3 +106,8 @@ def list_stocks():
         stocks=stocks,
         value=round(current_account_value, 2),
     )
+
+
+@stocks_blueprint.route("/chartjs_demo1")
+def chartjs_demo1():
+    return render_template("stocks/chartjs_demo1.html")
