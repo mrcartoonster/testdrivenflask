@@ -6,6 +6,8 @@ from itsdangerous import URLSafeTimedSerializer
 from project import mail
 from project.models import User
 
+# import pytest
+
 
 def test_get_registration_page(test_client):
     """GIVEN a Flask application configured for testing WHEN the
@@ -574,7 +576,7 @@ def test_post_change_password_logged_in_valid_current_password(
     log_in_default_user,
     afterwards_reset_default_user_password,
 ):
-    """GIVEN a Flask aplication with the user logged in WHEN the
+    """GIVEN a Flask application with the user logged in WHEN the
     '/users/change_password' page is posted to (POST) with the correct
     current password THEN check that the user's password is updated
     correctly."""

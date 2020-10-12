@@ -312,6 +312,7 @@ def process_password_reset_token(token):
 
 
 @users_blueprint.route("/change_password", methods=["GET", "POST"])
+@login_required
 def change_password():
     form = ChangePasswordForm()
 
@@ -320,7 +321,7 @@ def change_password():
             current_user.set_password(form.new_password.data)
             db.session.add(current_user)
             db.session.commit()
-            flash("Password has been update!", "success")
+            flash("Password has been updated!", "success")
             current_app.logger.info(
                 f"Password updated for user: {current_user.email}",
             )

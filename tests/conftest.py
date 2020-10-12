@@ -39,7 +39,7 @@ class MockApiRateLimitExceededResponse(object):
         return {
             "Note": "Thank you for using Alpha Vantage! "
             + "Our standard API call frequency is "
-            + +"5 calls per minute and 500 calls per day.",
+            + "5 calls per minute and 500 calls per day.",
         }
 
 
@@ -228,6 +228,7 @@ def mock_requests_get_api_rate_limit_exceeded(monkeypatch):
         "https://www.alphavantage.co/query"
         "?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
     )
+    monkeypatch.setattr(requests, "get", mock_get)
 
 
 @pytest.fixture(scope="function")
