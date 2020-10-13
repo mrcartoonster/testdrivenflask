@@ -111,3 +111,38 @@ def list_stocks():
 @stocks_blueprint.route("/chartjs_demo1")
 def chartjs_demo1():
     return render_template("stocks/chartjs_demo1.html")
+
+
+@stocks_blueprint.route("/chartjs_demo2")
+def chartjs_demo2():
+    title = "Monthly data"
+    labels = ["January", "Febuary", "March", "April", "May", "June", "August"]
+    values = [10.3, 9.2, 8.7, 7.1, 6.0, 4.4, 7.6, 8.9]
+    return render_template(
+        "stocks/chartjs_demo2.html",
+        values=values,
+        labels=labels,
+        title=title,
+    )
+
+
+@stocks_blueprint.route("/chartjs_demo3")
+def chartjs_demo3():
+    title = "Daily Prices"
+    labels = [
+        datetime(2020, 2, 10),  # Monday 2/10/2020
+        datetime(2020, 2, 11),  # Tuesday 2/11/2020
+        datetime(2020, 2, 12),  # Wednesday 2/12/2020
+        datetime(2020, 2, 13),  # Thursday 2/13/2020
+        datetime(2020, 2, 14),  # Friday 2/14/2020
+        datetime(2020, 2, 17),  # Monday 2/17/2020
+        datetime(2020, 2, 18),  # Tuesday 2/18/2020
+        datetime(2020, 2, 19),
+    ]  # Wednesday 2/19/2020
+    values = [10.3, 9.2, 8.7, 7.1, 6.0, 4.4, 7.6, 8.9]
+    return render_template(
+        "stocks/chartjs_demo3.html",
+        values=values,
+        labels=labels,
+        title=title,
+    )
