@@ -264,24 +264,28 @@ def mock_requests_get_failure(monkeypatch):
     def mock_get(url):
         return MockFailedResponse(url)
 
-    url = (
+    uri = (
         "https://www.alphavantage.co/query?"
         "function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
     )
+
+    mock_get(uri)
 
     monkeypatch.setattr(requests, "get", mock_get)
 
 
 @pytest.fixture(scope="function")
-def mock_requests_get_success_weekly(monkypatch):
+def mock_requests_get_success_weekly(monkeypatch):
     """Create a mock for the requests.get() call to prevent making an
     actual API call."""
 
     def mock_get(url):
         return MockSuccessResponseWeekly(url)
 
-    url = (
+    uri = (
         "https://www.alphavantage.co/query?"
         "function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo"
     )
-    monkypatch.setattr(requests, "get", mock_get)
+
+    mock_get(uri)
+    monkeypatch.setattr(requests, "get", mock_get)

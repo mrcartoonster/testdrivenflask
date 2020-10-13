@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from flask import current_app
@@ -143,6 +143,57 @@ class Stock(db.Model):
                 current_app.config["ALPHA_VANTAGE_API_KEY"],
             )
         )
+
+    def get_weekly_stock_data(self):
+        title = ""
+        labels = []
+        values = []
+        url = self.create_alpha_vantage_get_url_weekly()
+
+        try:
+            r = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            current_app.logger.info(
+                (
+                    "Error ! Network problem preventing retrieving the weekly"
+                    f" stock data ({self.stock_symbol})!"
+                ),
+            )
+
+        if r.status_code == 200:
+            weekly_data = r.json()
+            title = f"Weekly Prices ({self.stock_symbol})"
+
+            # Detirmin the start date as either:
+            # - If the start date is less than 12 weeks ago, then use the date
+            # from 12 weeks ago.
+            # - Otherwise, sue the purchase date
+            start_date = self.purchase_date
+            if (datetime.now() - self.purchase_date) < timedelta(weeks=12):
+                start_date = datetime.now() - timedelta(weeks=12)
+
+            for element in weekly_data["Weekly Adjusted Time Series"]:
+                date = datetime.fromisoformat(element)
+                if date.date() > start_date.date():
+                    labels.append(date)
+                    values.append(
+                        weekly_data["Weekly Adjusted Time Series"][element][
+                            "4. close"
+                        ],
+                    )
+
+            # Reverse the elements as the data from Alpah Vantage is read in
+            # latest to oldest
+            labels.reverse()
+            values.reverse()
+
+        else:
+            current_app.logger.info(
+                (
+                    f"Error! Received unexpected status ({r.status_code}) "
+                    f"when retrieving weekly stock data ({self.stock_symbol})!"
+                ),
+            )
 
 
 class User(db.Model):
