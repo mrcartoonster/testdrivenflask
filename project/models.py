@@ -194,6 +194,7 @@ class Stock(db.Model):
                     f"when retrieving weekly stock data ({self.stock_symbol})!"
                 ),
             )
+        return title, labels, values
 
 
 class User(db.Model):

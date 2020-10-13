@@ -115,8 +115,8 @@ def test_get_stock_data_success_two_calls(
 @freeze_time("2020-07-28")
 def test_get_weekly_stock_data_success(
     test_client_with_app_context,
-    mock_requests_get_success_weekly,
     new_stock,
+    mock_requests_get_success_weekly,
 ):
     """GIVEN a Flask application and a monkypatched version of
     requests.get() WHEN the HTTP response is set to successful THEN
@@ -137,8 +137,8 @@ def test_get_weekly_stock_data_success(
 
 def test_get_weekly_stock_data_failure(
     test_client_with_app_context,
-    mock_requests_get_failure,
     new_stock,
+    mock_requests_get_failure,
 ):
     """GIVEN a Flask application and a monkeypatched version of
     requests.get() WHEN the HTTP response is set to failed THEN check

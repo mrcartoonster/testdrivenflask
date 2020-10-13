@@ -282,10 +282,38 @@ def mock_requests_get_success_weekly(monkeypatch):
     def mock_get(url):
         return MockSuccessResponseWeekly(url)
 
-    uri = (
+    url = (
         "https://www.alphavantage.co/query?"
         "function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo"
     )
 
-    mock_get(uri)
     monkeypatch.setattr(requests, "get", mock_get)
+
+
+@pytest.fixture(scope="module")
+def register_second_user(test_client):
+    """Reigsters the second user using the '/users/register' route."""
+    test_client.post(
+        "/users/register",
+        data={
+            "email": "patrick@yahoo.com",
+            "password": "FlaskIsTheBest987",
+        },
+    )
+
+
+@pytest.fixture(scope="function")
+def log_in_second_user(test_client, register_second_user):
+    """Login and logout the second user."""
+    test_client.post(
+        "/users/login",
+        data={
+            "email": "patrick@yahoo.com",
+            "password": "FlaskIsTheBest987",
+        },
+    )
+
+    yield  # This is where the testing happend!
+
+    # Logout the user
+    test_client.get("/users/logout", follow_redirects=True)
