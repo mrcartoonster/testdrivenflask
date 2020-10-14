@@ -3,6 +3,7 @@ from datetime import datetime
 
 import click
 from flask import (
+    abort,
     current_app,
     flash,
     redirect,
@@ -145,4 +146,22 @@ def chartjs_demo3():
         values=values,
         labels=labels,
         title=title,
+    )
+
+
+@stocks_blueprint.route("/stocks/<id>")
+@login_required
+def stock_details(id):
+    stock = Stock.query.filter_by(id=id).first_or_404()
+
+    if stock.user_id != current_user.id:
+        abort(403)
+
+    title, labels, values = stock.get_weekly_stock_data()
+    return render_template(
+        "stocks/stock_details.html",
+        stock=stock,
+        title=title,
+        labels=labels,
+        values=values,
     )

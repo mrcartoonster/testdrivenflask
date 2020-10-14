@@ -198,3 +198,62 @@ def test_get_stock_list_not_logged_in(test_client):
     assert response.status_code == 200
     assert b"List of Stocks:" not in response.data
     assert b"Please log in to access this page." in response.data
+
+
+def test_get_stock_detail_page(
+    test_client,
+    add_stocks_for_default_user,
+    mock_requests_get_success_weekly,
+):
+    """
+    1. Given a Flask application
+    2. When the '/stoks/3' page is retrieved (GET) when the suer is logged in
+    and the response from Alpha Vantage was successful
+    3. Then check that the response is valid including a chart
+    """
+    response = test_client.get("/stocks/3", follow_redirects=True)
+    assert b"Stock Details:" in response.data
+    assert b'canvas id="stockChart"' in response.data
+
+
+def test_get_stock_detail_page_failed_response(
+    test_client,
+    add_stocks_for_default_user,
+    mock_requests_get_failure,
+):
+    """
+    1. Given a Flask application
+    2. When the '/stocks/3' page is retrieved (GET) when the user is logged in,
+    but thre response from Alpha Vantage failed
+    3. Then check that the response is valid but the chart is not displayed
+    """
+    response = test_client.get("/stocks/3", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Stock Details:" in response.data
+    assert b"canvas id='stockChart'" not in response.data
+
+
+def test_get_stock_deatail_page_incorrect_user(
+    test_client,
+    log_in_second_user,
+):
+    """
+    1. GIVEN a Flask application
+    2. WHEN the '/stocks/3' page is retrieved (GET) by the incorrect user
+    3. THEN check that a 403 error is returned
+    """
+    response = test_client.get("/stocks/3")
+    assert response.status_code == 403
+    assert b"Stock Details:" not in response.data
+    assert b"canvas id='stockChart'" not in response.data
+
+
+def test_get_stock_detail_page_invalid_stock(test_client, log_in_second_user):
+    """
+    1. GIVEN a Flask application
+    2. WHEN the '/stocks/234' page is retrieved (GET)
+    3. THEN check that a 404 error is returned
+    """
+    response = test_client.get("/stocks/234")
+    assert response.status_code == 404
+    assert b"Stock Details:" not in response.data

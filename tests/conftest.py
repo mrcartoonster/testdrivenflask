@@ -52,6 +52,34 @@ class MockFailedResponse(object):
         return {"error": "bad"}
 
 
+class MockSuccessResponseWeekly:
+    def __init__(self, url):
+        self.status_code = 200
+        self.url = url
+
+    def json(self):
+        return {
+            "Meta Data": {
+                "2. Symbol": "AAPL",
+                "3. Last Refreshed": "2020-07-28",
+            },
+            "Weekly Adjusted Time Series": {
+                "2020-07-24": {
+                    "4. close": "379.2400",
+                },
+                "2020-07-17": {
+                    "4. close": "362.7600",
+                },
+                "2020-06-11": {
+                    "4. close": "354.3400",
+                },
+                "2020-02-25": {
+                    "4. close": "432.9800",
+                },
+            },
+        }
+
+
 @pytest.fixture(scope="function")
 def new_stock():
     stock = Stock("AAPL", "16", "406.78", 17, datetime(2020, 7, 18))
@@ -236,9 +264,56 @@ def mock_requests_get_failure(monkeypatch):
     def mock_get(url):
         return MockFailedResponse(url)
 
-    url = (
+    uri = (
         "https://www.alphavantage.co/query?"
         "function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
     )
 
+    mock_get(uri)
+
     monkeypatch.setattr(requests, "get", mock_get)
+
+
+@pytest.fixture(scope="function")
+def mock_requests_get_success_weekly(monkeypatch):
+    """Create a mock for the requests.get() call to prevent making an
+    actual API call."""
+
+    def mock_get(url):
+        return MockSuccessResponseWeekly(url)
+
+    url = (
+        "https://www.alphavantage.co/query?"
+        "function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo"
+    )
+
+    monkeypatch.setattr(requests, "get", mock_get)
+
+
+@pytest.fixture(scope="module")
+def register_second_user(test_client):
+    """Reigsters the second user using the '/users/register' route."""
+    test_client.post(
+        "/users/register",
+        data={
+            "email": "patrick@yahoo.com",
+            "password": "FlaskIsTheBest987",
+        },
+    )
+
+
+@pytest.fixture(scope="function")
+def log_in_second_user(test_client, register_second_user):
+    """Login and logout the second user."""
+    test_client.post(
+        "/users/login",
+        data={
+            "email": "patrick@yahoo.com",
+            "password": "FlaskIsTheBest987",
+        },
+    )
+
+    yield  # This is where the testing happend!
+
+    # Logout the user
+    test_client.get("/users/logout", follow_redirects=True)

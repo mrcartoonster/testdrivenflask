@@ -33,6 +33,7 @@ pytest-pythonpath = "^0.7.3"
 pretty-errors = "^1.2.18"
 docformatter = "^1.3.1"
 pyperclip = "^1.8.0"
+freezegun = "^1.0.0"
 
 [tool.pytest.ini_options]
 addopts = "-rssxX -l --tb=short --strict"
