@@ -40,6 +40,7 @@ pexpect==4.8.0; sys_platform != "win32"
 pickleshare==0.7.5
 prettyprinter==0.18.0
 prompt-toolkit==3.0.7
+psycopg2==2.8.6
 ptyprocess==0.6.0
 pycparser==2.20
 pygments==2.7.1
