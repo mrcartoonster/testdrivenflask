@@ -25,6 +25,7 @@ flask-migrate==2.5.3
 flask-shell-ipython==0.4.1
 flask-sqlalchemy==2.4.4
 flask-wtf==0.14.3
+gunicorn==20.0.4
 idna==2.10
 ipython==7.18.1
 ipython-genutils==0.2.0
