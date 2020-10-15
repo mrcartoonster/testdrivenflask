@@ -31,7 +31,7 @@ def create_app():
     app.config.from_object(config_type)
 
     register_blueprints(app)
-    configure_logging(app)
+    # configure_logging(app)
     register_error_pages(app)
     initialize_extensions(app)
 
