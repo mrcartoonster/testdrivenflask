@@ -77,8 +77,8 @@ def configure_logging(app):
         shell_handler.setLevel(logging.INFO)
         file_handler.setLevel(logging.INFO)
 
-    app.logger.addHandler(shell_handler)
-    app.logger.addHandler(file_handler)
+    #   app.logger.addHandler(shell_handler)
+    #   app.logger.addHandler(file_handler)
 
     # Remove the default logger configured by Flask
     app.logger.removeHandler(default_handler)
