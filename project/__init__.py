@@ -51,23 +51,31 @@ def register_blueprints(app):
 
 def configure_logging(app):
     # Logging Configuration
+    if app.config['LOG_TO_STDOUT']:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.INFO)
+        app.logger.addHandler(stream_handler)
 
-    shell_handler = RichHandler()
-    file_handler = RotatingFileHandler(
-        "instance/flask-stock-portfolio.log",
-        maxBytes=16384,
-        backupCount=20,
-    )
+    else:
+        shell_handler = RichHandler()
+        file_handler = RotatingFileHandler(
+            "instance/flask-stock-portfolio.log",
+            maxBytes=16384,
+            backupCount=20,
+        )
 
-    shell_formatter = logging.Formatter("%(message)s")
-    file_formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s: %(message)s [in %(filename)s:%(lineno)d]",
-    )
-    shell_handler.setFormatter(shell_formatter)
-    file_handler.setFormatter(file_formatter)
+        shell_formatter = logging.Formatter("%(message)s")
+        file_formatter = logging.Formatter(
+            (
+                "%(asctime)s %(levelname)s: %(message)s "
+                "[in %(filename)s:%(lineno)d]"
+            ),
+        )
+        shell_handler.setFormatter(shell_formatter)
+        file_handler.setFormatter(file_formatter)
 
-    shell_handler.setLevel(logging.INFO)
-    file_handler.setLevel(logging.INFO)
+        shell_handler.setLevel(logging.INFO)
+        file_handler.setLevel(logging.INFO)
 
     app.logger.addHandler(shell_handler)
     app.logger.addHandler(file_handler)
