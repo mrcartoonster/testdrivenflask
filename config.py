@@ -32,6 +32,11 @@ class Config:
 
 class ProductionConfig(Config):
     FLASK_ENV = "production"
+    SQLALCHEMY_DATABASE_URI = (
+        "postgres://${db.USERNAME}:${db.PASSWORD}"
+        "@${db.HOSTNAME}:${db.PORT}/${db.DATABASE}"
+    )
+
 
 
 class DevelopmentConfig(Config):
