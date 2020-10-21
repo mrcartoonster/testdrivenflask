@@ -13,9 +13,8 @@ class Config:
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY", default="BAD_SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        # "DATABASE_URL",
-        # default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'app.db')}",
-        SQLALCHEMY_DATABASE_URI="postgres://tester2_user:NdgFD1CYI710lhWbMYgPPjeLZMqhihxY@dpg-bu7rom793em5behc2p50:5432/tester2"
+        "DATABASE_URL",
+        default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'app.db')}",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = True
@@ -33,7 +32,6 @@ class Config:
 
 class ProductionConfig(Config):
     FLASK_ENV = "production"
-    SQLALCHEMY_DATABASE_URI = "postgres://tester2_user:NdgFD1CYI710lhWbMYgPPjeLZMqhihxY@dpg-bu7rom793em5behc2p50:5432/tester2"
 
 
 class DevelopmentConfig(Config):
