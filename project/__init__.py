@@ -27,7 +27,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configure the Flask application
-    config_type = os.getenv("CONFIG_TYPE", "config.DevelopmentConfig")
+    config_type = os.getenv("CONFIG_TYPE", "config.ProductionConfig")
     app.config.from_object(config_type)
 
     register_blueprints(app)
